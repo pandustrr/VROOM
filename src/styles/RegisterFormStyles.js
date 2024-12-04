@@ -9,6 +9,13 @@ container: {
     backgroundColor: '#f9f9f9', // Warna latar belakang yang seragam
 },
 
+judul: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+},
+    
 registerButton: {
     backgroundColor: '#2196F3', // Warna tombol daftar
     borderRadius: 5,
