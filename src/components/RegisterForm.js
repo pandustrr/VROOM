@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Alert } from 'react-native';
 import { Input, Button, Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import styles from '../styles/formStyles'; // pastikan sudah mendefinisikan styles yang dibutuhkan
+import styles from '../styles/RegisterFormStyles'; 
 import { registerUser } from '../services/authService';
 import { simpanDataPengguna } from '../services/dbService';
 
@@ -13,7 +13,6 @@ export default function RegisterForm({ onLogin }) {
     const [loading, setLoading] = useState(false);
 
     const handleRegister = async () => {
-        // Validasi jika kolom kosong
         if (!username || !email || !password) {
             Alert.alert('Pendaftaran Gagal', 'Semua kolom wajib diisi.');
             return;
@@ -21,24 +20,20 @@ export default function RegisterForm({ onLogin }) {
 
         setLoading(true);
         try {
-            // Proses registrasi menggunakan service `registerUser`
             const user = await registerUser(email, password, username);
             if (user) {
-                // Jika registrasi berhasil, simpan data pengguna
                 const penggunaData = { username, email, vroomPassword: password };
-                await simpanDataPengguna(email, penggunaData); // Simpan data pengguna di Firestore atau database
+                await simpanDataPengguna(email, penggunaData); 
 
-                // Tampilkan alert berhasil
+                
                 Alert.alert('Pendaftaran Berhasil', 'Akun Anda telah terdaftar.');
                 
-                // Kembali ke halaman login setelah berhasil
+                
                 onLogin();
             }
         } catch (error) {
-            // Tangani error jika terjadi kesalahan saat registrasi
             Alert.alert('Pendaftaran Gagal', 'Terjadi kesalahan saat mendaftar.');
         } finally {
-            // Nonaktifkan loading setelah selesai
             setLoading(false);
         }
     };
