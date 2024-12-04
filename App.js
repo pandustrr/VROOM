@@ -1,65 +1,80 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { Alert } from 'react-native';
 import LoginScreen from './src/screens/LoginScreen';
 import PilihanKendaraan from './src/penyewaan/PilihanKendaraan';
 import FormPenyewaan from './src/penyewaan/FormPenyewaan';
 import KonfirmasiPenyewaan from './src/penyewaan/KonfirmasiPenyewaan';
 
+const Stack = createStackNavigator();
+
 export default function App() {
-    const [screen, setScreen] = useState('login'); // Default ke LoginScreen
-    const [kendaraan, setKendaraan] = useState('');
-    const [detailPenyewaan, setDetailPenyewaan] = useState(null);
-    const [userName, setUserName] = useState(''); // Menyimpan nama pengguna
-
-    const handleLoginSuccess = (user) => {
-        // Setelah login berhasil, kita simpan nama pengguna dan arahkan ke halaman pilihan kendaraan
+    const handleLoginSuccess = (navigation, user) => {
         const name = user.displayName || 'Pengguna'; // Ganti dengan field username jika perlu
-        setUserName(name);
-        setScreen('pilihan');
         Alert.alert('Login Berhasil', `Selamat datang, ${name}!`);
+        navigation.navigate('PilihanKendaraan', { userName: name });
     };
 
-    const renderScreen = () => {
-        switch (screen) {
-            case 'pilihan':
-                return (
-                    <PilihanKendaraan
-                        onSelect={(item) => {
-                            setKendaraan(item);
-                            setScreen('form');
-                        }}
-                    />
-                );
-            case 'form':
-                return (
-                    <FormPenyewaan
-                        kendaraan={kendaraan}
-                        onSelesai={(detail) => {
-                            setDetailPenyewaan(detail);
-                            setScreen('konfirmasi');
-                        }}
-                    />
-                );
-            case 'konfirmasi':
-                return (
-                    <KonfirmasiPenyewaan
-                        detail={detailPenyewaan}
-                        onKembali={() => setScreen('pilihan')}
-                    />
-                );
-            default:
-                return <LoginScreen onLoginSuccess={handleLoginSuccess} />;
-        }
-    };
+    return (
+        <NavigationContainer>
+            <Stack.Navigator initialRouteName="Login">
+                {/* Login Screen */}
+                <Stack.Screen
+                    name="Login"
+                    options={{ headerShown: false }}
+                >
+                    {({ navigation }) => (
+                        <LoginScreen
+                            onLoginSuccess={(user) => handleLoginSuccess(navigation, user)}
+                        />
+                    )}
+                </Stack.Screen>
 
-    return <View style={styles.container}>{renderScreen()}</View>;
+                {/* Pilihan Kendaraan */}
+                <Stack.Screen
+                    name="PilihanKendaraan"
+                    options={{ title: 'Pilih Kendaraan' }}
+                >
+                    {({ navigation, route }) => (
+                        <PilihanKendaraan
+                            onSelect={(kendaraan) =>
+                                navigation.navigate('FormPenyewaan', { kendaraan, userName: route.params.userName })
+                            }
+                        />
+                    )}
+                </Stack.Screen>
+
+                {/* Form Penyewaan */}
+                <Stack.Screen
+                    name="FormPenyewaan"
+                    options={({ route }) => ({
+                        title: `Sewa ${route.params.kendaraan}`,
+                    })}
+                >
+                    {({ navigation, route }) => (
+                        <FormPenyewaan
+                            kendaraan={route.params.kendaraan}
+                            onSelesai={(detail) =>
+                                navigation.navigate('KonfirmasiPenyewaan', { detail })
+                            }
+                        />
+                    )}
+                </Stack.Screen>
+
+                {/* Konfirmasi Penyewaan */}
+                <Stack.Screen
+                    name="KonfirmasiPenyewaan"
+                    options={{ title: 'Konfirmasi Penyewaan' }}
+                >
+                    {({ navigation, route }) => (
+                        <KonfirmasiPenyewaan
+                            detail={route.params.detail}
+                            onKembali={() => navigation.navigate('PilihanKendaraan')}
+                        />
+                    )}
+                </Stack.Screen>
+            </Stack.Navigator>
+        </NavigationContainer>
+    );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#f8f9fa',
-    },
-});

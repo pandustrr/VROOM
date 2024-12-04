@@ -1,36 +1,47 @@
 import React, { useState } from 'react';
-import { View, Alert, StyleSheet, KeyboardAvoidingView } from 'react-native';
+import { KeyboardAvoidingView, Alert } from 'react-native';
 import { Input, Button, Text } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import styles from '../styles/formStyles'; // pastikan sudah mendefinisikan styles yang dibutuhkan
 import { loginUser } from '../services/authService';
 import { ambilDataPengguna } from '../services/dbService';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import FormPenyewaan  from '../penyewaan/FormPenyewaan';
 
-export default function LoginForm({ onRegister }) {
+export default function LoginForm({ onRegister, onResetPassword }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
-    const Sewa = FormPenyewaan
 
     const handleLogin = async () => {
         setLoading(true);
-        const user = await loginUser(email, password);
-        setLoading(false);
+        try {
+            // Cek apakah login berhasil dengan fungsi loginUser
+            const user = await loginUser(email, password);
+            setLoading(false);
 
-        if (user) {
-            const userData = await ambilDataPengguna(email);
+            // Jika user ditemukan, ambil data pengguna dari database
+            if (user) {
+                const userData = await ambilDataPengguna(email);
 
-            if (userData && userData.vroomPassword === password) {
-                Alert.alert("Login Berhasil", `Selamat datang, ${userData.username} !`);
+                // Periksa apakah password sesuai dengan yang ada di database
+                if (userData && userData.vroomPassword === password) {
+                    Alert.alert('Login Berhasil', `Selamat datang, ${userData.username}!`);
+                } else {
+                    Alert.alert('Login Gagal', 'Email atau Password yang Anda masukkan salah.');
+                }
             } else {
-                Alert.alert("Login Gagal", "Email atau Password yang Anda masukkan salah.");
+                Alert.alert('Login Gagal', 'Pengguna tidak ditemukan.');
             }
+        } catch (error) {
+            setLoading(false);
+            Alert.alert('Error', 'Terjadi kesalahan saat login.');
         }
     };
 
     return (
         <KeyboardAvoidingView style={styles.container} behavior="padding">
-            <Text h3 style={styles.title}>Login Aplikasi Vroom</Text>
+            <Text style={styles.loginTitle}>Login Aplikasi Vroom</Text>
+
+            {/* Input untuk email */}
             <Input
                 placeholder="Masukkan Email"
                 leftIcon={<Icon name="email" size={24} color="gray" />}
@@ -38,55 +49,44 @@ export default function LoginForm({ onRegister }) {
                 onChangeText={setEmail}
                 autoCapitalize="none"
                 keyboardType="email-address"
-                containerStyle={styles.inputContainer}
+                containerStyle={{ marginBottom: 10 }}
+                style={styles.input}
             />
+
+            {/* Input untuk password */}
             <Input
                 placeholder="Masukkan Password"
                 leftIcon={<Icon name="lock" size={24} color="gray" />}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
-                containerStyle={styles.inputContainer}
+                containerStyle={{ marginBottom: 20 }}
+                style={styles.input}
             />
+
+            {/* Tombol Login */}
             <Button
                 title="Login"
                 onPress={handleLogin}
                 loading={loading}
                 buttonStyle={styles.loginButton}
             />
-            <Text style={styles.registerText} onPress={onRegister}>
-                Belum punya akun? <Text style={styles.registerLink}>Daftar di sini</Text>
+
+            {/* Link untuk registrasi */}
+            <Text style={styles.registerText}>
+                Belum punya akun?{' '}
+                <Text style={styles.registerLink} onPress={onRegister}>
+                    Daftar di sini
+                </Text>
+            </Text>
+
+            {/* Link untuk reset password */}
+            <Text style={styles.registerText}>
+                Lupa password?{' '}
+                <Text style={styles.registerLink} onPress={onResetPassword}>
+                    Reset di sini
+                </Text>
             </Text>
         </KeyboardAvoidingView>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        padding: 20,
-        backgroundColor: '#f9f9f9',
-    },
-    title: {
-        textAlign: 'center',
-        marginBottom: 20,
-        color: '#333',
-    },
-    inputContainer: {
-        marginBottom: 15,
-    },
-    loginButton: {
-        backgroundColor: '#4CAF50',
-        borderRadius: 5,
-    },
-    registerText: {
-        textAlign: 'center',
-        marginTop: 15,
-        color: '#555',
-    },
-    registerLink: {
-        color: '#4CAF50',
-        fontWeight: 'bold',
-    },
-});
