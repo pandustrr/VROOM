@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { KeyboardAvoidingView, Alert } from 'react-native';
 import { Input, Button, Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import styles from '../styles/formStyles'; // pastikan sudah mendefinisikan styles yang dibutuhkan
+import styles from '../styles/LoginFormStyles'; 
 import { loginUser } from '../services/authService';
 import { ambilDataPengguna } from '../services/dbService';
 
@@ -14,15 +14,12 @@ export default function LoginForm({ onRegister, onResetPassword }) {
     const handleLogin = async () => {
         setLoading(true);
         try {
-            // Cek apakah login berhasil dengan fungsi loginUser
             const user = await loginUser(email, password);
             setLoading(false);
 
-            // Jika user ditemukan, ambil data pengguna dari database
             if (user) {
                 const userData = await ambilDataPengguna(email);
 
-                // Periksa apakah password sesuai dengan yang ada di database
                 if (userData && userData.vroomPassword === password) {
                     Alert.alert('Login Berhasil', `Selamat datang, ${userData.username}!`);
                 } else {
