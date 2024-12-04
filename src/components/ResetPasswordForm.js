@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Text, TextInput, View, Button, Alert } from 'react-native';
 import { resetPassword } from '../services/authService';
-import styles from '../styles/formStyles';
+import styles from '../styles/ResetFormStyles';
 
 export default function ResetPasswordForm({ onBackToLogin }) {
     const [email, setEmail] = useState(''); // Menyimpan email
