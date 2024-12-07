@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -31,3 +32,38 @@ backButton: {
 });
 
 export default styles;
+=======
+import { StyleSheet } from 'react-native';
+
+const styles = StyleSheet.create({
+// Styles khusus untuk RegisterForm
+container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+    backgroundColor: '#f9f9f9', // Warna latar belakang yang seragam
+},
+
+judul: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+},
+    
+registerButton: {
+    backgroundColor: '#2196F3', // Warna tombol daftar
+    borderRadius: 5,
+    paddingVertical: 10,
+},
+backButton: {
+    backgroundColor: '#f44336', // Warna tombol kembali
+    borderRadius: 5,
+    paddingVertical: 10,
+    marginTop: 10,
+},
+
+});
+
+export default styles;
+>>>>>>> b0b6c8089019fcbbd2470135620b0a399db2be3d

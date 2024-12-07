@@ -23,7 +23,16 @@ export default function RegisterForm({ onLogin }) {
             const user = await registerUser(email, password, username);
             if (user) {
                 const penggunaData = { username, email, vroomPassword: password };
+<<<<<<< HEAD
                 await simpanDataPengguna(email, penggunaData);                 
+=======
+                await simpanDataPengguna(email, penggunaData); 
+
+                
+                Alert.alert('Pendaftaran Berhasil', 'Akun Anda telah terdaftar.');
+                
+                
+>>>>>>> b0b6c8089019fcbbd2470135620b0a399db2be3d
                 onLogin();
             }
         } catch (error) {

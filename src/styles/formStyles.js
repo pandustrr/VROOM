@@ -34,6 +34,12 @@
 //         marginVertical: 10,
 //     },
 
+<<<<<<< HEAD
 // });
 
 // export default styles;
+=======
+});
+
+export default styles;
+>>>>>>> b0b6c8089019fcbbd2470135620b0a399db2be3d
