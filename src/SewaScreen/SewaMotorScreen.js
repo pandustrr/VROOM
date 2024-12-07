@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useRoute } from '@react-navigation/native';
-import SewaForm from '../components/SewaFormMotor';
+import SewaForm from '../SewaForm/SewaMotorForm';
 
 export default function SewaScreen() {
     const route = useRoute();

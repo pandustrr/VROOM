@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from './src/screens/LoginScreen';
 import TampilanAwalScreen from './src/Fitur_Sewa/TampilanAwalScreen';
-import SewaScreen from './src/Fitur_Sewa/SewaScreen'; // Impor SewaScreen
+import SewaScreen from './src/SewaScreen/SewaMotorScreen'; 
 
 const Stack = createStackNavigator();
 
@@ -22,7 +22,7 @@ export default function App() {
                     options={{ headerShown: true }}
                 />
                 <Stack.Screen
-                    name="Sewa"
+                    name="Sewa Motor"
                     component={SewaScreen}  // Tambahkan rute untuk SewaScreen
                     options={{ headerShown: true }}
                 />

@@ -23,7 +23,7 @@ export default function SewaForm({ motor }) {
                 } catch (error) {
                     console.error('Error fetching motor data:', error.message);
                 } finally {
-                    setLoading(false); // Sembunyikan loading
+                    setLoading(true); 
                 }
             }
         };

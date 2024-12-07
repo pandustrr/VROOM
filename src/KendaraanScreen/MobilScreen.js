@@ -2,7 +2,7 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native
 import React, { useEffect, useState } from 'react';
 import { ambilDataMobil } from '../services/dbService';
 import { useNavigation } from '@react-navigation/native';
-import MobilForm from '../components/MobilForm';
+import MobilForm from '../KendaraanForm/MobilForm';
 
 export default function MoiblScreen() {
     const [mobilData, setMobilData] = useState([]);

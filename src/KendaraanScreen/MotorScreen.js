@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import { ambilDataMotor } from '../services/dbService';
-import MotorForm from '../components/MotorForm'; 
+import MotorForm from '../KendaraanForm/MotorForm'; 
 import { useNavigation } from '@react-navigation/native';
 import styles from '../styles/MotorScreenStyles';
 
@@ -24,7 +24,7 @@ export default function MotorScreen() {
 
     const lanjutKeSewa = () => {
         if (motorTerpilih) {
-            navigation.navigate('Sewa', { motorTerpilih });
+            navigation.navigate('Sewa Motor', { motorTerpilih });
         }
     };
 
