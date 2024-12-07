@@ -15,9 +15,7 @@ const firebaseConfig = {
 // Inisialisasi aplikasi Firebase
 const app = initializeApp(firebaseConfig);
 
-// Inisialisasi Authentication dan Firestore
 const auth = getAuth(app);
 const db = getFirestore(app);
 
 export { auth, db };
-
