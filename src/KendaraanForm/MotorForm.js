@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
-import styles from '../styles/MotorFormStyles';
+import styles from '../StylesKendaraan/MotorFormStyles';
 
 export default function MotorForm({ motor, onSelectMotor, motorDipilih }) {
     return (

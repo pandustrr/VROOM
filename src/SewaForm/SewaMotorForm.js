@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { Formik } from 'formik';
 import { ambilDataMotor } from '../services/dbService';
-import styles from '../styles/SewaFormMotorStyles';
+import styles from '../StylesKendaraan/SewaMotorFormStyles';
 
 export default function SewaForm({ motor }) {
     const [motorData, setMotorData] = useState(motor); 
@@ -57,7 +57,6 @@ export default function SewaForm({ motor }) {
         >
             {({ handleSubmit }) => (
                 <View style={styles.container}>
-                    <Text style={styles.title}>Form Penyewaan</Text>
                     <View style={styles.motorContainer}>
                         <Image source={{ uri: motorData.gambar }} style={styles.image} />
                         <Text style={styles.nama}>{motorData.nama}</Text>

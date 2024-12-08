@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, Alert } from 'react-native';
-import { Input, Button, Text } from 'react-native-elements';
+import { Input, Button, Text} from 'react-native-elements';
+// import { Text } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import styles from '../styles/LoginFormStyles'; 
 import { loginUser } from '../services/authService';

@@ -3,7 +3,7 @@ import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import { ambilDataMotor } from '../services/dbService';
 import MotorForm from '../KendaraanForm/MotorForm'; 
 import { useNavigation } from '@react-navigation/native';
-import styles from '../styles/MotorScreenStyles';
+import styles from '../StylesKendaraan/MotorScreenStyles';
 
 
 export default function MotorScreen() {
@@ -30,7 +30,6 @@ export default function MotorScreen() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Pilih Motor</Text>
             <FlatList
                 data={motorData}
                 keyExtractor={(item) => item.id}

@@ -22,13 +22,12 @@ export default function MoiblScreen() {
 
     const lanjutKeSewa = () => {
         if (mobilTerpilih) {
-            navigation.navigate('Sewa', { mobilTerpilih });
+            navigation.navigate('Sewa Mobil', { mobilTerpilih });
         }
     };
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Pilih Mobil</Text>
             <FlatList
                 data={mobilData}
                 keyExtractor={(item) => item.id}

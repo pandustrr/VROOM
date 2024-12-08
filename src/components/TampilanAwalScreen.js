@@ -1,7 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Icon } from 'react-native-elements';
-import PesananScreen from './PesananScreen';
+import PesananScreen from '../PesananUser/PesananForm';
 import MotorScreen from '../KendaraanScreen/MotorScreen';
 import MobilScreen from '../KendaraanScreen/MobilScreen';
 import SepedaScreen from '../KendaraanScreen/SepedaScreen';

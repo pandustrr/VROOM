@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
     },
-    motorContainer: {
+    mobilContainer: {
         backgroundColor: '#ffffff',
         borderRadius: 8,
         padding: 16,
