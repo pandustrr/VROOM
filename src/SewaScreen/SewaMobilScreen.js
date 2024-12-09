@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Alert, StyleSheet } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { auth } from '../services/firebase'; // Sesuaikan path impor sesuai folder
-import { simpanDataPesanan } from '../services/dbService';
+import { simpanDataPesananMobil } from '../services/dbService';
 import SewaMobilForm from '../SewaForm/SewaMobilForm';
 
 export default function SewaMobilScreen() {
@@ -35,7 +35,7 @@ export default function SewaMobilScreen() {
             }
 
             // Simpan data penyewaan ke Firestore
-            await simpanDataPesanan({
+            await simpanDataPesananMobil({
                 email: userEmail,
                 gambar: mobilTerpilih.gambar,
                 harga: mobilTerpilih.harga,

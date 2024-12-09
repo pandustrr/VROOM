@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity } from 'react-native';
-import { ambilDataSepeda } from '../services/dbService';  // Sesuaikan dengan fungsi untuk ambil data sepeda
-import SepedaForm from '../KendaraanForm/SepedaForm';  // Ganti dengan SepedaForm
+import { View, FlatList, TouchableOpacity, Text } from 'react-native';
+import { ambilDataSepeda } from '../services/dbService'; // Pastikan untuk mengimpor fungsi yang benar
+import SepedaForm from '../KendaraanForm/SepedaForm'; // Menggunakan form sepeda
 import { useNavigation } from '@react-navigation/native';
-import styles from '../StylesKendaraan/SepedaScreenStyles';  // Pastikan file style sesuai
+import styles from '../StylesKendaraan/SepedaScreenStyles'; // Pastikan style untuk sepeda
 
 export default function SepedaScreen() {
-    const [sepedaData, setSepedaData] = useState([]);  // Ganti motorData menjadi sepedaData
-    const [sepedaTerpilih, setSepedaTerpilih] = useState(null);  // Ganti motorTerpilih menjadi sepedaTerpilih
+    const [sepedaData, setSepedaData] = useState([]);
+    const [sepedaTerpilih, setSepedaTerpilih] = useState(null);
     const navigation = useNavigation();
 
     useEffect(() => {
-        const fetchSepedaData = async () => {  // Ubah fetchMotorData menjadi fetchSepedaData
-            const data = await ambilDataSepeda();  // Pastikan fungsi ambilDataSepeda untuk sepeda
+        const fetchSepedaData = async () => {
+            const data = await ambilDataSepeda();
             if (data) {
                 setSepedaData(data);
             }
@@ -23,7 +23,7 @@ export default function SepedaScreen() {
 
     const lanjutKeSewa = () => {
         if (sepedaTerpilih) {
-            navigation.navigate('Sewa Sepeda', { sepedaTerpilih });  // Ganti 'Sewa Motor' menjadi 'Sewa Sepeda'
+            navigation.navigate('Sewa Sepeda', { sepedaTerpilih });
         }
     };
 
@@ -34,20 +34,20 @@ export default function SepedaScreen() {
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
                     <SepedaForm
-                        sepeda={item}  
-                        onSelectSepeda={setSepedaTerpilih}  // Ganti onSelectMotor menjadi onSelectSepeda
-                        sepedaDipilih={sepedaTerpilih}  // Ganti motorDipilih menjadi sepedaDipilih
+                        sepeda={item}
+                        onSelectSepeda={setSepedaTerpilih}
+                        sepedaDipilih={sepedaTerpilih}
                     />
                 )}
             />
             {/* Tombol Pilih Sepeda */}
             <View style={styles.tombolContainer}>
                 <TouchableOpacity
-                    style={[styles.tombolPilih, sepedaTerpilih && styles.tombolAktif]}  
+                    style={[styles.tombolPilih, sepedaTerpilih && styles.tombolAktif]}
                     onPress={lanjutKeSewa}
-                    disabled={!sepedaTerpilih}  
+                    disabled={!sepedaTerpilih}
                 >
-                    <Text style={styles.teksTombol}>Pilih Sepeda</Text>  
+                    <Text style={styles.teksTombol}>Pilih Sepeda</Text>
                 </TouchableOpacity>
             </View>
         </View>

@@ -1,29 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Formik } from 'formik';
-import { ambilDataMotor } from '../services/dbService';
-import styles from '../StylesKendaraan/SewaMotorFormStyles';
+import { ambilDataMotor } from '../services/dbService'; // Mengimpor fungsi untuk mengambil data motor
+import styles from '../StylesKendaraan/SewaMotorFormStyles'; // Mengubah path ke styles motor
 
-export default function SewaForm({ motor }) {
-    const [motorData, setMotorData] = useState(motor); 
-    const [loading, setLoading] = useState(!motor); 
+export default function SewaMotorForm({ motor, onSubmit }) {
+    const [motorData, setMotorData] = useState(motor || null);
+    const [loading, setLoading] = useState(!motor);
 
     useEffect(() => {
         const fetchMotorData = async () => {
             if (!motor || !motor.gambar || !motor.nama) {
-                setLoading(true); // Tampilkan loading jika data motor tidak lengkap
+                setLoading(true);
                 try {
-                    const allMotors = await ambilDataMotor(); // Ambil semua data motor dari Firebase
-                    const selectedMotor = allMotors.find(item => item.id === motor?.id); // Cari motor berdasarkan ID
+                    const allMotors = await ambilDataMotor(); // Mengambil data motor
+                    const selectedMotor = allMotors.find((item) => item.id === motor?.id);
                     if (selectedMotor) {
-                        setMotorData(selectedMotor); // Setel data motor yang ditemukan
+                        setMotorData(selectedMotor);
                     } else {
                         console.warn('Motor tidak ditemukan');
                     }
                 } catch (error) {
                     console.error('Error fetching motor data:', error.message);
                 } finally {
-                    setLoading(true); 
+                    setLoading(false);
                 }
             }
         };
@@ -34,6 +34,7 @@ export default function SewaForm({ motor }) {
     if (loading) {
         return (
             <View style={styles.container}>
+                <ActivityIndicator size="large" color="#007BFF" />
                 <Text style={styles.title}>Memuat data motor...</Text>
             </View>
         );
@@ -50,9 +51,12 @@ export default function SewaForm({ motor }) {
     return (
         <Formik
             initialValues={{ motorTerpilih: motorData }}
-            onSubmit={(values) => {
-                console.log('Motor yang disewa:', values.motorTerpilih);
-                alert('Motor berhasil disewa');
+            onSubmit={() => {
+                if (onSubmit && typeof onSubmit === 'function') {
+                    onSubmit(motorData); // Mengirimkan data motor yang dipilih ke fungsi onSubmit
+                } else {
+                    console.warn('Fungsi onSubmit tidak disediakan atau bukan fungsi valid');
+                }
             }}
         >
             {({ handleSubmit }) => (
@@ -79,5 +83,3 @@ export default function SewaForm({ motor }) {
         </Formik>
     );
 }
-
-

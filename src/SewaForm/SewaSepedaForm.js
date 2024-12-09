@@ -1,29 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Formik } from 'formik';
-import { ambilDataSepeda } from '../services/dbService';  // Ganti untuk mengambil data sepeda
-import styles from '../StylesKendaraan/SewaSepedaFormStyles'; // Ganti dengan gaya untuk sepeda
+import { ambilDataSepeda } from '../services/dbService'; // Mengimpor fungsi untuk mengambil data sepeda
+import styles from '../StylesKendaraan/SewaSepedaFormStyles'; // Mengubah path ke styles sepeda
 
-export default function SewaForm({ sepeda }) {
-    const [sepedaData, setSepedaData] = useState(sepeda);  // Gunakan sepeda, bukan motor
-    const [loading, setLoading] = useState(!sepeda); // Mengatur status loading jika sepeda tidak ada
+export default function SewaSepedaForm({ sepeda, onSubmit }) {
+    const [sepedaData, setSepedaData] = useState(sepeda || null);
+    const [loading, setLoading] = useState(!sepeda);
 
     useEffect(() => {
         const fetchSepedaData = async () => {
             if (!sepeda || !sepeda.gambar || !sepeda.nama) {
-                setLoading(true); // Menampilkan loading jika data sepeda tidak lengkap
+                setLoading(true);
                 try {
-                    const allSepeda = await ambilDataSepeda(); // Ambil semua data sepeda dari Firebase
-                    const selectedSepeda = allSepeda.find(item => item.id === sepeda?.id); // Cari sepeda berdasarkan ID
+                    const allSepedas = await ambilDataSepeda(); // Mengambil data sepeda
+                    const selectedSepeda = allSepedas.find((item) => item.id === sepeda?.id);
                     if (selectedSepeda) {
-                        setSepedaData(selectedSepeda); // Set data sepeda yang ditemukan
+                        setSepedaData(selectedSepeda);
                     } else {
                         console.warn('Sepeda tidak ditemukan');
                     }
                 } catch (error) {
                     console.error('Error fetching sepeda data:', error.message);
                 } finally {
-                    setLoading(true); 
+                    setLoading(false);
                 }
             }
         };
@@ -34,6 +34,7 @@ export default function SewaForm({ sepeda }) {
     if (loading) {
         return (
             <View style={styles.container}>
+                <ActivityIndicator size="large" color="#007BFF" />
                 <Text style={styles.title}>Memuat data sepeda...</Text>
             </View>
         );
@@ -50,9 +51,12 @@ export default function SewaForm({ sepeda }) {
     return (
         <Formik
             initialValues={{ sepedaTerpilih: sepedaData }}
-            onSubmit={(values) => {
-                console.log('Sepeda yang disewa:', values.sepedaTerpilih);
-                alert('Sepeda berhasil disewa');
+            onSubmit={() => {
+                if (onSubmit && typeof onSubmit === 'function') {
+                    onSubmit(sepedaData); // Mengirimkan data sepeda yang dipilih ke fungsi onSubmit
+                } else {
+                    console.warn('Fungsi onSubmit tidak disediakan atau bukan fungsi valid');
+                }
             }}
         >
             {({ handleSubmit }) => (
@@ -77,6 +81,5 @@ export default function SewaForm({ sepeda }) {
                 </View>
             )}
         </Formik>
-
     );
 }

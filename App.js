@@ -2,7 +2,6 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-// Impor layar yang digunakan
 import LoginScreen from './src/screens/LoginScreen';
 import TampilanAwalScreen from './src/components/TampilanAwalScreen';
 import MobilScreen from './src/KendaraanScreen/MobilScreen';
@@ -11,6 +10,7 @@ import MotorScreen from './src/KendaraanScreen/MotorScreen';
 import SewaMotorScreen from './src/SewaScreen/SewaMotorScreen';
 import SepedaScreen from './src/KendaraanScreen/SepedaScreen';
 import SewaSepedaScreen from './src/SewaScreen/SewaSepedaScreen';
+import PesananForm from './src/PesananUser/PesananForm';
 
 const Stack = createStackNavigator();
 
@@ -65,6 +65,12 @@ export default function App() {
                     name="Sewa Sepeda"
                     component={SewaSepedaScreen}
                     options={{ title: 'Sewa Sepeda' }}
+                />
+                {/* Halaman Pesanan */}
+                <Stack.Screen
+                    name="Pesanan"
+                    component={PesananForm}  // Mengarah ke PesananForm
+                    options={{ title: 'Pesanan Saya' }}
                 />
             </Stack.Navigator>
         </NavigationContainer>
