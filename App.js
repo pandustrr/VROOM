@@ -12,6 +12,8 @@ import SewaMotorScreen from './src/SewaScreen/SewaMotorScreen';
 import SepedaScreen from './src/KendaraanScreen/SepedaScreen';
 import SewaSepedaScreen from './src/SewaScreen/SewaSepedaScreen';
 import PesananForm from './src/PesananUser/PesananForm';
+import PesananScreen from './src/PesananUser/PesananScreen';
+import DetailPesanan from './src/PesananUser/DetailPesanan';
 
 const Stack = createStackNavigator();
 
@@ -31,12 +33,11 @@ export default function App() {
                     name="Login"
                     component={LoginScreen}
                     options={{ headerShown: false }}
-                    // Jika menggunakan handleLogin untuk menyimpan email
-                    // Anda bisa melewatkan email setelah login ke tampilan berikutnya
+                    // Menambahkan listener untuk menangani login dan menyimpan email
                     listeners={{
                         focus: () => {
                             // Pastikan LoginScreen mengirimkan email setelah login
-                            // Anda bisa memanggil handleLogin di LoginScreen
+                            // Anda bisa memanggil handleLogin di LoginScreen jika perlu
                         }
                     }}
                 />
@@ -90,13 +91,28 @@ export default function App() {
                     options={{ title: 'Sewa Sepeda' }}
                 />
                 
-                {/* Halaman Pesanan */}
+                {/* Halaman Pesanan Form */}
                 <Stack.Screen
-                    name="Pesanan"
+                    name="PesananForm"
                     component={PesananForm}  // Mengarah ke PesananForm
                     options={{ title: 'Pesanan Saya' }}
                     initialParams={{ emailPengguna: emailUser }} // Mengirim email pengguna ke halaman PesananForm
                 />
+                
+                {/* Halaman Pesanan Screen */}
+                <Stack.Screen
+                    name="PesananScreen"
+                    component={PesananScreen}
+                    options={{ title: 'Pesanan Saya' }}
+                />
+
+                {/* Halaman Detail Pesanan */}
+                <Stack.Screen
+                    name="DetailPesanan"
+                    component={DetailPesanan}
+                    options={{ title: 'Detail Pesanan' }}
+                />
+                
             </Stack.Navigator>
         </NavigationContainer>
     );

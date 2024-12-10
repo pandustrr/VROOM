@@ -262,4 +262,22 @@ export async function bacaPesanan(email) {
     }
 }
 
+export async function hapusPesanan(id, email) {
+    try {
+        console.log("Memulai penghapusan dengan ID:", id, "dan Email:", email);
 
+        if (!id || !email) {
+            throw new Error("ID atau Email tidak valid.");
+        }
+
+        const itemRef = doc(db, "pesanan_saya", email, "items", id);
+        console.log("Referensi dokumen:", itemRef.path);
+
+        await deleteDoc(itemRef);
+
+        console.log("Dokumen berhasil dihapus.");
+    } catch (error) {
+        console.error("Gagal menghapus dokumen:", error.message);
+        throw error;
+    }
+}
