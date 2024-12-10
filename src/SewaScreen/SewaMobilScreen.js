@@ -10,31 +10,26 @@ export default function SewaMobilScreen() {
     const navigation = useNavigation();
     const mobilTerpilih = route.params?.mobilTerpilih;
 
-    const handleSewaSubmit = async () => {
+    const handleSewaSubmit = async (values) => {
         try {
-            // Ambil email pengguna dari autentikasi Firebase
             const currentUser = auth.currentUser;
             const userEmail = currentUser?.email;
 
-            // Validasi apakah pengguna sudah login
             if (!userEmail) {
                 Alert.alert('Error', 'Anda harus login untuk menyewa mobil.');
                 return;
             }
 
-            // Validasi data mobil
             if (!mobilTerpilih || !mobilTerpilih.id) {
                 Alert.alert('Error', 'Data mobil tidak valid. Silakan coba lagi.');
                 return;
             }
 
-            // Cek status mobil, jika tidak tersedia, tampilkan pesan error dan hentikan proses
             if (mobilTerpilih.status === 'tidak tersedia') {
                 Alert.alert('Mobil ini tidak tersedia untuk disewa.');
-                return; // Hentikan proses jika mobil tidak tersedia
+                return; 
             }
 
-            // Simpan data penyewaan ke Firestore
             await simpanDataPesananMobil({
                 email: userEmail,
                 gambar: mobilTerpilih.gambar,
@@ -42,6 +37,10 @@ export default function SewaMobilScreen() {
                 id: mobilTerpilih.id,
                 nama: mobilTerpilih.nama,
                 status: mobilTerpilih.status,
+                namaPenyewa: values.namaPenyewa,
+                tanggalPemesanan: values.tanggalPemesanan,
+                hariPenyewaan: values.hariPenyewaan,
+                totalHarga: values.totalHarga,
             });
 
             // Notifikasi sukses

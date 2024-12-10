@@ -1,40 +1,35 @@
 import React from 'react';
 import { View, Alert, StyleSheet } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { auth } from '../services/firebase'; // Sesuaikan path impor sesuai folder
-import { simpanDataPesananSepeda } from '../services/dbService'; // Mengimpor fungsi untuk menyimpan data pesanan sepeda
-import SewaSepedaForm from '../SewaForm/SewaSepedaForm'; // Form khusus untuk sepeda
+import { auth } from '../services/firebase'; // Pastikan untuk sesuaikan dengan layanan autentikasi Anda
+import { simpanDataPesananSepeda } from '../services/dbService';  // Sesuaikan dengan service untuk menyimpan pesanan sepeda
+import SewaSepedaForm from '../SewaForm/SewaSepedaForm';  // Pastikan jalur impor sudah sesuai
 
 export default function SewaSepedaScreen() {
     const route = useRoute();
     const navigation = useNavigation();
-    const sepedaTerpilih = route.params?.sepedaTerpilih; // Mengambil data sepeda yang dipilih
+    const sepedaTerpilih = route.params?.sepedaTerpilih;
 
-    const handleSewaSubmit = async () => {
+    const handleSewaSubmit = async (values) => {
         try {
-            // Ambil email pengguna dari autentikasi Firebase
             const currentUser = auth.currentUser;
             const userEmail = currentUser?.email;
 
-            // Validasi apakah pengguna sudah login
             if (!userEmail) {
                 Alert.alert('Error', 'Anda harus login untuk menyewa sepeda.');
                 return;
             }
 
-            // Validasi data sepeda
             if (!sepedaTerpilih || !sepedaTerpilih.id) {
                 Alert.alert('Error', 'Data sepeda tidak valid. Silakan coba lagi.');
                 return;
             }
 
-            // Cek status sepeda, jika tidak tersedia, tampilkan pesan error dan hentikan proses
             if (sepedaTerpilih.status === 'tidak tersedia') {
                 Alert.alert('Sepeda ini tidak tersedia untuk disewa.');
-                return; // Hentikan proses jika sepeda tidak tersedia
+                return; 
             }
 
-            // Simpan data penyewaan sepeda ke Firestore
             await simpanDataPesananSepeda({
                 email: userEmail,
                 gambar: sepedaTerpilih.gambar,
@@ -42,6 +37,10 @@ export default function SewaSepedaScreen() {
                 id: sepedaTerpilih.id,
                 nama: sepedaTerpilih.nama,
                 status: sepedaTerpilih.status,
+                namaPenyewa: values.namaPenyewa,
+                tanggalPemesanan: values.tanggalPemesanan,
+                hariPenyewaan: values.hariPenyewaan,
+                totalHarga: values.totalHarga,
             });
 
             // Notifikasi sukses
@@ -52,7 +51,7 @@ export default function SewaSepedaScreen() {
                 },
             ]);
         } catch (error) {
-            console.error('Error saat menyimpan data pesanan sepeda:', error.message);
+            console.error('Error saat menyimpan data pesanan:', error.message);
             Alert.alert('Error', 'Terjadi kesalahan saat menyewa sepeda. Silakan coba lagi.');
         }
     };

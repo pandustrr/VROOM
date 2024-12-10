@@ -53,7 +53,7 @@ export const ambilDataMotor = async () => {
 
         if (motorList.length > 0) {
             console.log("Data Motor:", motorList);
-            return motorList; // Mengembalikan array data motor
+            return motorList; 
         } else {
             console.warn("Dokumen motor tidak ditemukan");
             return [];
@@ -67,7 +67,6 @@ export const ambilDataMotor = async () => {
 // Mengambil data mobil
 export const ambilDataMobil = async () => {
     try {
-        // Referensi ke koleksi 'mobil'
         const mobilCollection = collection(db, 'mobil');
         const mobilSnapshot = await getDocs(mobilCollection);
         const mobilList = mobilSnapshot.docs.map((doc) => ({
@@ -90,16 +89,16 @@ export const ambilDataMobil = async () => {
 
 export const ambilDataSepeda = async () => {
     try {
-        const sepedaCollectionRef = collection(db, 'sepeda'); // Mengakses koleksi sepeda
-        const sepedaSnapshot = await getDocs(sepedaCollectionRef); // Mengambil semua dokumen dalam koleksi sepeda
+        const sepedaCollectionRef = collection(db, 'sepeda'); 
+        const sepedaSnapshot = await getDocs(sepedaCollectionRef); 
         const sepedaList = sepedaSnapshot.docs.map(doc => ({
-            id: doc.id, // ID dokumen sebagai ID unik
-            ...doc.data(), // Gabungkan data dari dokumen
+            id: doc.id, 
+            ...doc.data(), 
         }));
 
         if (sepedaList.length > 0) {
             console.log("Data Sepeda:", sepedaList);
-            return sepedaList; // Mengembalikan array data sepeda
+            return sepedaList; 
         } else {
             console.warn("Dokumen sepeda tidak ditemukan");
             return [];
@@ -110,39 +109,37 @@ export const ambilDataSepeda = async () => {
     }
 };
 
-// Fungsi untuk menyimpan data pesanan mobil
 export async function simpanDataPesananMobil(pesanan) {
     try {
         if (!pesanan.email || !pesanan.id) {
             throw new Error("Email pengguna dan ID mobil harus disertakan.");
         }
 
-        // Cek status mobil sebelum menyimpan pesanan
         if (pesanan.status === "tidak tersedia") {
             Alert.alert("Error", "Mobil ini tidak tersedia untuk disewa.");
             return;
         }
 
-        // Dapatkan ID pesanan baru
         const idPesananBaru = await getNextPesananId(pesanan.email);
 
-        // Rujuk ke koleksi Firestore untuk menyimpan pesanan mobil
         const pesananRef = doc(db, "pesanan_saya", pesanan.email);
 
-        // Menyimpan data pesanan ke dalam dokumen pesanan_saya
         await setDoc(pesananRef, {
             email: pesanan.email,
         }, { merge: true });
 
-        // Tambahkan item pesanan ke sub-koleksi 'items'
         const itemRef = collection(pesananRef, "items");
         await addDoc(itemRef, {
-            idPesanan: idPesananBaru, // Tambahkan ID pesanan baru
+            idPesanan: idPesananBaru,
             gambar: pesanan.gambar,
             harga: pesanan.harga,
             id: pesanan.id,
             nama: pesanan.nama,
             status: pesanan.status,
+            namaPenyewa: pesanan.namaPenyewa,
+            tanggalPemesanan: pesanan.tanggalPemesanan,
+            hariPenyewaan: pesanan.hariPenyewaan,
+            totalHarga: pesanan.totalHarga,
         });
 
         console.log("Pesanan mobil berhasil disimpan:", pesanan);
@@ -152,98 +149,92 @@ export async function simpanDataPesananMobil(pesanan) {
     }
 }
 
-// Fungsi untuk menyimpan data pesanan motor
 export async function simpanDataPesananMotor(pesanan) {
     try {
         if (!pesanan.email || !pesanan.id) {
             throw new Error("Email pengguna dan ID motor harus disertakan.");
         }
 
-        // Cek status motor sebelum menyimpan pesanan
         if (pesanan.status === "tidak tersedia") {
             Alert.alert("Error", "Motor ini tidak tersedia untuk disewa.");
             return;
         }
 
-        // Dapatkan ID pesanan baru
         const idPesananBaru = await getNextPesananId(pesanan.email);
 
-        // Rujuk ke koleksi Firestore untuk menyimpan pesanan motor
         const pesananRef = doc(db, "pesanan_saya", pesanan.email);
 
-        // Menyimpan data pesanan ke dalam dokumen pesanan_saya
         await setDoc(pesananRef, {
             email: pesanan.email,
         }, { merge: true });
 
-        // Tambahkan item pesanan ke sub-koleksi 'items'
         const itemRef = collection(pesananRef, "items");
         await addDoc(itemRef, {
-            idPesanan: idPesananBaru, // Tambahkan ID pesanan baru
+            idPesanan: idPesananBaru,
             gambar: pesanan.gambar,
             harga: pesanan.harga,
             id: pesanan.id,
             nama: pesanan.nama,
             status: pesanan.status,
+            namaPenyewa: pesanan.namaPenyewa,
+            tanggalPemesanan: pesanan.tanggalPemesanan,
+            hariPenyewaan: pesanan.hariPenyewaan,
+            totalHarga: pesanan.totalHarga,
         });
 
         console.log("Pesanan motor berhasil disimpan:", pesanan);
     } catch (error) {
         console.error("Error saat menyimpan data pesanan motor:", error.message);
-        throw error;
+        throw error;  
     }
 }
 
-// Fungsi untuk menyimpan data pesanan sepeda
 export async function simpanDataPesananSepeda(pesanan) {
     try {
         if (!pesanan.email || !pesanan.id) {
             throw new Error("Email pengguna dan ID sepeda harus disertakan.");
         }
 
-        // Cek status sepeda sebelum menyimpan pesanan
         if (pesanan.status === "tidak tersedia") {
             Alert.alert("Error", "Sepeda ini tidak tersedia untuk disewa.");
             return;
         }
 
-        // Dapatkan ID pesanan baru
         const idPesananBaru = await getNextPesananId(pesanan.email);
 
-        // Rujuk ke koleksi Firestore untuk menyimpan pesanan sepeda
         const pesananRef = doc(db, "pesanan_saya", pesanan.email);
 
-        // Menyimpan data pesanan ke dalam dokumen pesanan_saya
+        // Menyimpan atau memperbarui data pesanan pengguna
         await setDoc(pesananRef, {
             email: pesanan.email,
         }, { merge: true });
 
-        // Tambahkan item pesanan ke sub-koleksi 'items'
         const itemRef = collection(pesananRef, "items");
         await addDoc(itemRef, {
-            idPesanan: idPesananBaru, 
+            idPesanan: idPesananBaru,
             gambar: pesanan.gambar,
             harga: pesanan.harga,
             id: pesanan.id,
             nama: pesanan.nama,
             status: pesanan.status,
+            namaPenyewa: pesanan.namaPenyewa,
+            tanggalPemesanan: pesanan.tanggalPemesanan,
+            hariPenyewaan: pesanan.hariPenyewaan,
+            totalHarga: pesanan.totalHarga,
         });
 
         console.log("Pesanan sepeda berhasil disimpan:", pesanan);
     } catch (error) {
         console.error("Error saat menyimpan data pesanan sepeda:", error.message);
-        throw error;
+        throw error;  
     }
 }
 
-// Fungsi untuk mendapatkan ID pesanan baru
 async function getNextPesananId(email) {
     try {
-        // Rujuk ke sub-koleksi 'items' milik pengguna
         const itemsCollection = collection(doc(db, "pesanan_saya", email), "items");
         const snapshot = await getDocs(itemsCollection);
 
-        // ID pesanan baru adalah jumlah dokumen yang ada + 1
         return snapshot.size + 1;
     } catch (error) {
         console.error("Error saat mendapatkan ID pesanan baru:", error.message);
@@ -254,19 +245,16 @@ async function getNextPesananId(email) {
 
 export async function bacaPesanan(email) {
     try {
-        // Referensi ke sub-koleksi 'items' di dalam 'pesanan_saya/{email}'
         const itemsRef = collection(db, "pesanan_saya", email, "items");
 
-        // Ambil semua dokumen dari sub-koleksi 'items'
         const querySnapshot = await getDocs(itemsRef);
 
-        // Transformasikan data ke dalam array
         const pesananList = querySnapshot.docs.map(doc => ({
-            id: doc.id, // ID dokumen
-            ...doc.data(), // Data pesanan
+            id: doc.id, 
+            ...doc.data(), 
         }));
 
-        console.log("Daftar pesanan:", pesananList); // Debug log
+        console.log("Daftar pesanan:", pesananList); 
         return pesananList;
     } catch (error) {
         console.error("Error saat membaca data pesanan:", error.message);

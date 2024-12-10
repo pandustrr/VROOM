@@ -2,39 +2,34 @@ import React from 'react';
 import { View, Alert, StyleSheet } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { auth } from '../services/firebase'; // Sesuaikan path impor sesuai folder
-import { simpanDataPesananMotor } from '../services/dbService'; // Pastikan mengimpor fungsi yang benar
-import SewaMotorForm from '../SewaForm/SewaMotorForm'; // Form khusus untuk motor
+import { simpanDataPesananMotor } from '../services/dbService'; // Pastikan simpanDataPesananMotor ada di dbService
+import SewaMotorForm from '../SewaForm/SewaMotorForm'; // Impor form untuk motor
 
 export default function SewaMotorScreen() {
     const route = useRoute();
     const navigation = useNavigation();
     const motorTerpilih = route.params?.motorTerpilih;
 
-    const handleSewaSubmit = async () => {
+    const handleSewaSubmit = async (values) => {
         try {
-            // Ambil email pengguna dari autentikasi Firebase
             const currentUser = auth.currentUser;
             const userEmail = currentUser?.email;
 
-            // Validasi apakah pengguna sudah login
             if (!userEmail) {
                 Alert.alert('Error', 'Anda harus login untuk menyewa motor.');
                 return;
             }
 
-            // Validasi data motor
             if (!motorTerpilih || !motorTerpilih.id) {
                 Alert.alert('Error', 'Data motor tidak valid. Silakan coba lagi.');
                 return;
             }
 
-            // Cek status motor, jika tidak tersedia, tampilkan pesan error dan hentikan proses
             if (motorTerpilih.status === 'tidak tersedia') {
                 Alert.alert('Motor ini tidak tersedia untuk disewa.');
-                return; // Hentikan proses jika motor tidak tersedia
+                return;
             }
 
-            // Simpan data penyewaan motor ke Firestore
             await simpanDataPesananMotor({
                 email: userEmail,
                 gambar: motorTerpilih.gambar,
@@ -42,6 +37,10 @@ export default function SewaMotorScreen() {
                 id: motorTerpilih.id,
                 nama: motorTerpilih.nama,
                 status: motorTerpilih.status,
+                namaPenyewa: values.namaPenyewa,
+                tanggalPemesanan: values.tanggalPemesanan,
+                hariPenyewaan: values.hariPenyewaan,
+                totalHarga: values.totalHarga,
             });
 
             // Notifikasi sukses
@@ -52,7 +51,7 @@ export default function SewaMotorScreen() {
                 },
             ]);
         } catch (error) {
-            console.error('Error saat menyimpan data pesanan motor:', error.message);
+            console.error('Error saat menyimpan data pesanan:', error.message);
             Alert.alert('Error', 'Terjadi kesalahan saat menyewa motor. Silakan coba lagi.');
         }
     };
