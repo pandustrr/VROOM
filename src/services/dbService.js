@@ -7,12 +7,9 @@ import {
     getDoc, 
     getDocs, 
     addDoc, 
-    query,
-    increment,
-    deleteDoc 
+    deleteDoc,
+    getFirestore
 } from 'firebase/firestore'; 
-import { auth } from '../services/firebase';  // Import auth dari firebaseConfig untuk mengambil data pengguna
-
 
 
 // Fungsi untuk menyimpan data pengguna
@@ -47,11 +44,11 @@ export const ambilDataPengguna = async (email) => {
 // Mengambil data motor
 export const ambilDataMotor = async () => {
     try {
-        const motorCollectionRef = collection(db, 'motor'); // Mengakses koleksi motor
-        const motorSnapshot = await getDocs(motorCollectionRef); // Mengambil semua dokumen dalam koleksi motor
+        const motorCollectionRef = collection(db, 'motor'); 
+        const motorSnapshot = await getDocs(motorCollectionRef); 
         const motorList = motorSnapshot.docs.map(doc => ({
-            id: doc.id, // ID dokumen sebagai ID unik
-            ...doc.data(), // Gabungkan data dari dokumen
+            id: doc.id, 
+            ...doc.data(), 
         }));
 
         if (motorList.length > 0) {
@@ -113,142 +110,34 @@ export const ambilDataSepeda = async () => {
     }
 };
 
-// export async function simpanDataPesananMobil(pesanan) {
-//     try {
-//         if (!pesanan.email || !pesanan.id) {
-//             throw new Error('Email pengguna dan ID kendaraan harus disertakan.');
-//         }
-
-//         // Cek status kendaraan sebelum menyimpan pesanan
-//         if (pesanan.status === 'tidak tersedia') {
-//             Alert.alert('Error', 'Kendaraan ini tidak tersedia untuk disewa.'); 
-//             return; 
-//         }
-
-//         // Rujuk ke koleksi Firestore untuk menyimpan pesanan
-//         const pesananRef = doc(db, 'pesanan_saya', pesanan.email); // Menggunakan email sebagai ID dokumen
-
-//         // Menyimpan data pesanan ke dalam dokumen pesanan_saya
-//         await setDoc(pesananRef, { 
-//             email: pesanan.email,
-//         });
-
-//         // Tambahkan item pesanan ke sub-koleksi 'items'
-//         const itemRef = collection(pesananRef, 'items');
-//         await addDoc(itemRef, {
-//             gambar: pesanan.gambar,
-//             harga: pesanan.harga,
-//             id: pesanan.id,
-//             nama: pesanan.nama,
-//             status: pesanan.status,
-//         });
-
-//         console.log('Pesanan berhasil disimpan:', pesanan);
-//     } catch (error) {
-//         console.error('Error saat menyimpan data pesanan:', error.message);
-//         throw error; 
-//     }
-// }
-
-// export async function simpanDataPesananMotor(pesanan) {
-//     try {
-//         // Cek apakah email dan id motor ada
-//         if (!pesanan.email || !pesanan.id) {
-//             throw new Error('Email pengguna dan ID motor harus disertakan.');
-//         }
-
-//         // Cek status motor sebelum menyimpan pesanan
-//         if (pesanan.status === 'tidak tersedia') {
-//             Alert.alert('Error', 'Motor ini tidak tersedia untuk disewa.');
-//             return;
-//         }
-
-//         // Rujuk ke koleksi Firestore untuk menyimpan pesanan motor
-//         const pesananRef = doc(db, 'pesanan_saya', pesanan.email); // Menggunakan email sebagai ID dokumen
-
-//         // Menyimpan data pesanan ke dalam dokumen pesanan_saya
-//         await setDoc(pesananRef, { 
-//             email: pesanan.email,
-//         });
-
-//         // Tambahkan item pesanan ke sub-koleksi 'items'
-//         const itemRef = collection(pesananRef, 'items');
-//         await addDoc(itemRef, {
-//             gambar: pesanan.gambar,
-//             harga: pesanan.harga,
-//             id: pesanan.id,
-//             nama: pesanan.nama,
-//             status: pesanan.status,
-//         });
-
-//         console.log('Pesanan motor berhasil disimpan:', pesanan);
-//     } catch (error) {
-//         console.error('Error saat menyimpan data pesanan motor:', error.message);
-//         throw error; 
-//     }
-// }
-
-// export async function simpanDataPesananSepeda(pesanan) {
-//     try {
-//         // Cek apakah email dan id sepeda ada
-//         if (!pesanan.email || !pesanan.id) {
-//             throw new Error('Email pengguna dan ID sepeda harus disertakan.');
-//         }
-
-//         // Cek status sepeda sebelum menyimpan pesanan
-//         if (pesanan.status === 'tidak tersedia') {
-//             Alert.alert('Error', 'Sepeda ini tidak tersedia untuk disewa.');
-//             return;
-//         }
-
-//         // Rujuk ke koleksi Firestore untuk menyimpan pesanan sepeda
-//         const pesananRef = doc(db, 'pesanan_saya', pesanan.email); // Menggunakan email sebagai ID dokumen
-
-//         // Menyimpan data pesanan ke dalam dokumen pesanan_saya
-//         await setDoc(pesananRef, { 
-//             email: pesanan.email,
-//         });
-
-//         // Tambahkan item pesanan ke sub-koleksi 'items'
-//         const itemRef = collection(pesananRef, 'items');
-//         await addDoc(itemRef, {
-//             gambar: pesanan.gambar,
-//             harga: pesanan.harga,
-//             id: pesanan.id,
-//             nama: pesanan.nama,
-//             status: pesanan.status,
-//         });
-
-//         console.log('Pesanan sepeda berhasil disimpan:', pesanan);
-//     } catch (error) {
-//         console.error('Error saat menyimpan data pesanan sepeda:', error.message);
-//         throw error; 
-//     }
-// }
 // Fungsi untuk menyimpan data pesanan mobil
 export async function simpanDataPesananMobil(pesanan) {
     try {
         if (!pesanan.email || !pesanan.id) {
-            throw new Error('Email pengguna dan ID mobil harus disertakan.');
+            throw new Error("Email pengguna dan ID mobil harus disertakan.");
         }
 
         // Cek status mobil sebelum menyimpan pesanan
-        if (pesanan.status === 'tidak tersedia') {
-            Alert.alert('Error', 'Mobil ini tidak tersedia untuk disewa.');
+        if (pesanan.status === "tidak tersedia") {
+            Alert.alert("Error", "Mobil ini tidak tersedia untuk disewa.");
             return;
         }
+
+        // Dapatkan ID pesanan baru
+        const idPesananBaru = await getNextPesananId(pesanan.email);
 
         // Rujuk ke koleksi Firestore untuk menyimpan pesanan mobil
-        const pesananRef = doc(db, 'pesanan_saya', pesanan.email); // Menggunakan email sebagai ID dokumen
+        const pesananRef = doc(db, "pesanan_saya", pesanan.email);
 
         // Menyimpan data pesanan ke dalam dokumen pesanan_saya
-        await setDoc(pesananRef, { 
+        await setDoc(pesananRef, {
             email: pesanan.email,
-        });
+        }, { merge: true });
 
         // Tambahkan item pesanan ke sub-koleksi 'items'
-        const itemRef = collection(pesananRef, 'items');
+        const itemRef = collection(pesananRef, "items");
         await addDoc(itemRef, {
+            idPesanan: idPesananBaru, // Tambahkan ID pesanan baru
             gambar: pesanan.gambar,
             harga: pesanan.harga,
             id: pesanan.id,
@@ -256,106 +145,133 @@ export async function simpanDataPesananMobil(pesanan) {
             status: pesanan.status,
         });
 
-        console.log('Pesanan mobil berhasil disimpan:', pesanan);
+        console.log("Pesanan mobil berhasil disimpan:", pesanan);
     } catch (error) {
-        console.error('Error saat menyimpan data pesanan mobil:', error.message);
-        throw error; 
-    }
-}
-
-export async function simpanDataPesananMotor(pesanan) {
-    try {
-        if (!pesanan.email || !pesanan.id) {
-            throw new Error('Email pengguna dan ID motor harus disertakan.');
-        }
-
-        // Cek status motor sebelum menyimpan pesanan
-        if (pesanan.status === 'tidak tersedia') {
-            Alert.alert('Error', 'Motor ini tidak tersedia untuk disewa.');
-            return;
-        }
-
-        // Rujuk ke koleksi Firestore untuk menyimpan pesanan motor
-        const pesananRef = doc(db, 'pesanan_saya', pesanan.email); // Menggunakan email sebagai ID dokumen
-
-        // Menyimpan data pesanan ke dalam dokumen pesanan_saya
-        await setDoc(pesananRef, { 
-            email: pesanan.email,
-        });
-
-        // Tambahkan item pesanan ke sub-koleksi 'items'
-        const itemRef = collection(pesananRef, 'items');
-        await addDoc(itemRef, {
-            gambar: pesanan.gambar,
-            harga: pesanan.harga,
-            id: pesanan.id,
-            nama: pesanan.nama,
-            status: pesanan.status,
-        });
-
-        console.log('Pesanan motor berhasil disimpan:', pesanan);
-    } catch (error) {
-        console.error('Error saat menyimpan data pesanan motor:', error.message);
-        throw error; 
-    }
-}
-
-
-  // Fungsi untuk menyimpan data pesanan sepeda
-    export async function simpanDataPesananSepeda(pesanan) {
-    try {
-        if (!pesanan.email || !pesanan.id) {
-            throw new Error('Email pengguna dan ID sepeda harus disertakan.');
-        }
-
-        // Cek status sepeda sebelum menyimpan pesanan
-        if (pesanan.status === 'tidak tersedia') {
-            Alert.alert('Error', 'Sepeda ini tidak tersedia untuk disewa.');
-            return;
-        }
-
-        // Rujuk ke koleksi Firestore untuk menyimpan pesanan sepeda
-        const pesananRef = doc(db, 'pesanan_saya', pesanan.email); // Menggunakan email sebagai ID dokumen
-
-        // Menyimpan data pesanan ke dalam dokumen pesanan_saya
-        await setDoc(pesananRef, { 
-            email: pesanan.email,
-        });
-
-        // Tambahkan item pesanan ke sub-koleksi 'items'
-        const itemRef = collection(pesananRef, 'items');
-        await addDoc(itemRef, {
-            gambar: pesanan.gambar,
-            harga: pesanan.harga,
-            id: pesanan.id,
-            nama: pesanan.nama,
-            status: pesanan.status,
-        });
-
-        console.log('Pesanan sepeda berhasil disimpan:', pesanan);
-    } catch (error) {
-        console.error('Error saat menyimpan data pesanan sepeda:', error.message);
-        throw error; 
-    }
-}
-
-// Fungsi untuk mengambil data pesanan berdasarkan email pengguna
-export async function ambilDataPesanan(email) {
-    try {
-        const pesananRef = doc(db, 'pesanan_saya', email);
-        const itemRef = collection(pesananRef, 'items');
-
-        const q = query(itemRef);
-        const querySnapshot = await getDocs(q);
-        const pesananList = [];
-
-        querySnapshot.forEach((doc) => {
-            pesananList.push(doc.data());
-        });
-
-        return pesananList;
-    } catch (error) {
-        console.error('Error saat mengambil data pesanan:', error);
+        console.error("Error saat menyimpan data pesanan mobil:", error.message);
         throw error;
     }
 }
+
+// Fungsi untuk menyimpan data pesanan motor
+export async function simpanDataPesananMotor(pesanan) {
+    try {
+        if (!pesanan.email || !pesanan.id) {
+            throw new Error("Email pengguna dan ID motor harus disertakan.");
+        }
+
+        // Cek status motor sebelum menyimpan pesanan
+        if (pesanan.status === "tidak tersedia") {
+            Alert.alert("Error", "Motor ini tidak tersedia untuk disewa.");
+            return;
+        }
+
+        // Dapatkan ID pesanan baru
+        const idPesananBaru = await getNextPesananId(pesanan.email);
+
+        // Rujuk ke koleksi Firestore untuk menyimpan pesanan motor
+        const pesananRef = doc(db, "pesanan_saya", pesanan.email);
+
+        // Menyimpan data pesanan ke dalam dokumen pesanan_saya
+        await setDoc(pesananRef, {
+            email: pesanan.email,
+        }, { merge: true });
+
+        // Tambahkan item pesanan ke sub-koleksi 'items'
+        const itemRef = collection(pesananRef, "items");
+        await addDoc(itemRef, {
+            idPesanan: idPesananBaru, // Tambahkan ID pesanan baru
+            gambar: pesanan.gambar,
+            harga: pesanan.harga,
+            id: pesanan.id,
+            nama: pesanan.nama,
+            status: pesanan.status,
+        });
+
+        console.log("Pesanan motor berhasil disimpan:", pesanan);
+    } catch (error) {
+        console.error("Error saat menyimpan data pesanan motor:", error.message);
+        throw error;
+    }
+}
+
+// Fungsi untuk menyimpan data pesanan sepeda
+export async function simpanDataPesananSepeda(pesanan) {
+    try {
+        if (!pesanan.email || !pesanan.id) {
+            throw new Error("Email pengguna dan ID sepeda harus disertakan.");
+        }
+
+        // Cek status sepeda sebelum menyimpan pesanan
+        if (pesanan.status === "tidak tersedia") {
+            Alert.alert("Error", "Sepeda ini tidak tersedia untuk disewa.");
+            return;
+        }
+
+        // Dapatkan ID pesanan baru
+        const idPesananBaru = await getNextPesananId(pesanan.email);
+
+        // Rujuk ke koleksi Firestore untuk menyimpan pesanan sepeda
+        const pesananRef = doc(db, "pesanan_saya", pesanan.email);
+
+        // Menyimpan data pesanan ke dalam dokumen pesanan_saya
+        await setDoc(pesananRef, {
+            email: pesanan.email,
+        }, { merge: true });
+
+        // Tambahkan item pesanan ke sub-koleksi 'items'
+        const itemRef = collection(pesananRef, "items");
+        await addDoc(itemRef, {
+            idPesanan: idPesananBaru, 
+            gambar: pesanan.gambar,
+            harga: pesanan.harga,
+            id: pesanan.id,
+            nama: pesanan.nama,
+            status: pesanan.status,
+        });
+
+        console.log("Pesanan sepeda berhasil disimpan:", pesanan);
+    } catch (error) {
+        console.error("Error saat menyimpan data pesanan sepeda:", error.message);
+        throw error;
+    }
+}
+
+// Fungsi untuk mendapatkan ID pesanan baru
+async function getNextPesananId(email) {
+    try {
+        // Rujuk ke sub-koleksi 'items' milik pengguna
+        const itemsCollection = collection(doc(db, "pesanan_saya", email), "items");
+        const snapshot = await getDocs(itemsCollection);
+
+        // ID pesanan baru adalah jumlah dokumen yang ada + 1
+        return snapshot.size + 1;
+    } catch (error) {
+        console.error("Error saat mendapatkan ID pesanan baru:", error.message);
+        throw error;
+    }
+}
+
+
+export async function bacaPesanan(email) {
+    try {
+        // Referensi ke sub-koleksi 'items' di dalam 'pesanan_saya/{email}'
+        const itemsRef = collection(db, "pesanan_saya", email, "items");
+
+        // Ambil semua dokumen dari sub-koleksi 'items'
+        const querySnapshot = await getDocs(itemsRef);
+
+        // Transformasikan data ke dalam array
+        const pesananList = querySnapshot.docs.map(doc => ({
+            id: doc.id, // ID dokumen
+            ...doc.data(), // Data pesanan
+        }));
+
+        console.log("Daftar pesanan:", pesananList); // Debug log
+        return pesananList;
+    } catch (error) {
+        console.error("Error saat membaca data pesanan:", error.message);
+        throw error;
+    }
+}
+
+

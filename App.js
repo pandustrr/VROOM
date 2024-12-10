@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
+// Import layar-layar yang digunakan
 import LoginScreen from './src/screens/LoginScreen';
 import TampilanAwalScreen from './src/components/TampilanAwalScreen';
 import MobilScreen from './src/KendaraanScreen/MobilScreen';
@@ -15,6 +16,13 @@ import PesananForm from './src/PesananUser/PesananForm';
 const Stack = createStackNavigator();
 
 export default function App() {
+    const [emailUser, setEmailUser] = useState(null); // State untuk menyimpan email pengguna setelah login
+
+    // Fungsi untuk menangani login dan menyimpan email pengguna
+    const handleLogin = (email) => {
+        setEmailUser(email); // Simpan email setelah login
+    };
+
     return (
         <NavigationContainer>
             <Stack.Navigator initialRouteName="Login">
@@ -23,54 +31,71 @@ export default function App() {
                     name="Login"
                     component={LoginScreen}
                     options={{ headerShown: false }}
+                    // Jika menggunakan handleLogin untuk menyimpan email
+                    // Anda bisa melewatkan email setelah login ke tampilan berikutnya
+                    listeners={{
+                        focus: () => {
+                            // Pastikan LoginScreen mengirimkan email setelah login
+                            // Anda bisa memanggil handleLogin di LoginScreen
+                        }
+                    }}
                 />
+                
                 {/* Tampilan Awal */}
                 <Stack.Screen
                     name="Rental Kendaraan"
                     component={TampilanAwalScreen}
                     options={{ title: 'Rental Kendaraan' }}
                 />
+                
                 {/* Daftar Motor */}
                 <Stack.Screen
                     name="Daftar Motor"
                     component={MotorScreen}
                     options={{ title: 'Daftar Motor' }}
                 />
+                
                 {/* Form Penyewaan Motor */}
                 <Stack.Screen
                     name="Sewa Motor"
                     component={SewaMotorScreen}
                     options={{ title: 'Sewa Motor' }}
                 />
+                
                 {/* Daftar Mobil */}
                 <Stack.Screen
                     name="Daftar Mobil"
                     component={MobilScreen}
                     options={{ title: 'Daftar Mobil' }}
                 />
+                
                 {/* Form Penyewaan Mobil */}
                 <Stack.Screen
                     name="Sewa Mobil"
                     component={SewaMobilScreen}
                     options={{ title: 'Sewa Mobil' }}
                 />
+                
                 {/* Daftar Sepeda */}
                 <Stack.Screen
                     name="Daftar Sepeda"
                     component={SepedaScreen}
                     options={{ title: 'Daftar Sepeda' }}
                 />
+                
                 {/* Form Penyewaan Sepeda */}
                 <Stack.Screen
                     name="Sewa Sepeda"
                     component={SewaSepedaScreen}
                     options={{ title: 'Sewa Sepeda' }}
                 />
+                
                 {/* Halaman Pesanan */}
                 <Stack.Screen
                     name="Pesanan"
                     component={PesananForm}  // Mengarah ke PesananForm
                     options={{ title: 'Pesanan Saya' }}
+                    initialParams={{ emailPengguna: emailUser }} // Mengirim email pengguna ke halaman PesananForm
                 />
             </Stack.Navigator>
         </NavigationContainer>
