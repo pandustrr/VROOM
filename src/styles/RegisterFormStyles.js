@@ -17,7 +17,7 @@ judul: {
 },
 
 registerButton: {
-    backgroundColor: '#2196F3', // Warna tombol daftar
+    backgroundColor: '#4CAF50', 
     borderRadius: 5,
     paddingVertical: 10,
 },

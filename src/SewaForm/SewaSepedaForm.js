@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, ActivityIndicator, TextInput, ScrollView, KeyboardAvoidingView } from 'react-native';
 import { Formik } from 'formik';
-import { ambilDataSepeda } from '../services/dbService';  // Pastikan Anda menyesuaikan dengan service yang sesuai
+import { ambilDataSepeda } from '../services/dbService';  // Sesuaikan dengan fungsi ambilDataSepeda
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import styles from '../StylesKendaraan/SewaSepedaFormStyles';  // Sesuaikan dengan nama file gaya
+import styles from '../StylesKendaraan/SewaSepedaFormStyles';
 
 export default function SewaSepedaForm({ sepeda, onSubmit }) {
     const [sepedaData, setSepedaData] = useState(sepeda || null);
     const [loading, setLoading] = useState(!sepeda);
-    const [totalHarga, setTotalHarga] = useState(0);
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
 
@@ -17,7 +16,7 @@ export default function SewaSepedaForm({ sepeda, onSubmit }) {
             if (!sepeda || !sepeda.gambar || !sepeda.nama) {
                 setLoading(true);
                 try {
-                    const allSepedas = await ambilDataSepeda();
+                    const allSepedas = await ambilDataSepeda();  // Fungsi ambil data sepeda
                     const selectedSepeda = allSepedas.find((item) => item.id === sepeda?.id);
                     if (selectedSepeda) {
                         setSepedaData(selectedSepeda);
@@ -40,9 +39,7 @@ export default function SewaSepedaForm({ sepeda, onSubmit }) {
         setDatePickerVisibility(false);
     };
 
-    // Mendapatkan tanggal sekarang
     const currentDate = new Date();
-    const currentDateString = currentDate.toISOString().split('T')[0];  // Format YYYY-MM-DD
 
     if (loading) {
         return (
@@ -63,21 +60,38 @@ export default function SewaSepedaForm({ sepeda, onSubmit }) {
 
     return (
         <KeyboardAvoidingView
-            behavior="padding"  
+            behavior="padding"
             style={styles.container}
         >
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                 <Formik
                     initialValues={{ 
-                        sepedaTerpilih: sepedaData, 
                         namaPenyewa: '', 
                         tanggalPemesanan: '', 
                         hariPenyewaan: '', 
-                        totalHarga: 0 
                     }}
                     onSubmit={(values) => {
                         if (onSubmit && typeof onSubmit === 'function') {
-                            onSubmit(values); // Mengirimkan semua data penyewa dan sepeda ke fungsi onSubmit
+                            const formattedDate = selectedDate ? selectedDate.toISOString().split('T')[0] : '';
+                            const totalHarga = (parseInt(values.hariPenyewaan, 10) || 0) * sepedaData.harga;
+
+                            onSubmit({
+                                namaPenyewa: values.namaPenyewa,
+                                tanggalPemesanan: formattedDate,
+                                hariPenyewaan: parseInt(values.hariPenyewaan, 10) || 0,
+                                totalHarga,
+                                items: [
+                                    {
+                                        id: sepedaData.id,
+                                        nama: sepedaData.nama,
+                                        gambar: sepedaData.gambar,
+                                        harga: sepedaData.harga,
+                                        status: sepedaData.status,
+                                        hariPenyewaan: parseInt(values.hariPenyewaan, 10) || 0,
+                                        totalHarga,
+                                    },
+                                ],
+                            });
                         } else {
                             console.warn('Fungsi onSubmit tidak disediakan atau bukan fungsi valid');
                         }
@@ -99,7 +113,6 @@ export default function SewaSepedaForm({ sepeda, onSubmit }) {
                                 </Text>
                             </View>
 
-                            {/* Form Input untuk Nama Penyewa */}
                             <TextInput
                                 style={styles.input}
                                 placeholder="Nama Penyewa"
@@ -107,7 +120,6 @@ export default function SewaSepedaForm({ sepeda, onSubmit }) {
                                 onChangeText={(text) => setFieldValue('namaPenyewa', text)}
                             />
 
-                            {/* Tombol untuk Memilih Tanggal Pemesanan */}
                             <TouchableOpacity 
                                 style={[styles.input, { justifyContent: 'center', paddingLeft: 15 }]} 
                                 onPress={() => setDatePickerVisibility(true)}
@@ -117,36 +129,26 @@ export default function SewaSepedaForm({ sepeda, onSubmit }) {
                                 </Text>
                             </TouchableOpacity>
 
-                            {/* Form Input untuk Jumlah Hari Penyewaan */}
                             <TextInput
                                 style={styles.input}
                                 placeholder="Berapa hari dipesan"
                                 keyboardType="numeric"
                                 value={values.hariPenyewaan}
                                 onChangeText={(text) => {
-                                    const hari = parseInt(text, 10) || 0;
                                     setFieldValue('hariPenyewaan', text);
-                                    setFieldValue('totalHarga', hari * sepedaData.harga); // Menghitung total harga
                                 }}
                             />
 
-                            {/* Tampilkan Total Harga */}
-                            <Text style={styles.totalHarga}>
-                                Total Harga: Rp {values.totalHarga}
-                            </Text>
-
-                            {/* Tombol Konfirmasi Penyewaan */}
                             <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                                 <Text style={styles.buttonText}>Konfirmasi Penyewaan</Text>
                             </TouchableOpacity>
 
-                            {/* Modal untuk Memilih Tanggal */}
                             <DateTimePickerModal
                                 isVisible={isDatePickerVisible}
                                 mode="date"
                                 onConfirm={handleDateConfirm}
                                 onCancel={() => setDatePickerVisibility(false)}
-                                minimumDate={currentDate}  // Membatasi tanggal pemesanan agar tidak bisa memilih tanggal lampau
+                                minimumDate={currentDate}
                             />
                         </View>
                     )}

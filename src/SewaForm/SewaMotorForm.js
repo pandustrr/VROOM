@@ -1,14 +1,14 @@
+// SewaMotorForm.js
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, ActivityIndicator, TextInput, ScrollView, KeyboardAvoidingView } from 'react-native';
 import { Formik } from 'formik';
-import { ambilDataMotor } from '../services/dbService';  // Pastikan ambilDataMotor ada di dbService
+import { ambilDataMotor } from '../services/dbService';  // Sesuaikan dengan fungsi ambilDataMotor
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import styles from '../StylesKendaraan/SewaMotorFormStyles';
 
 export default function SewaMotorForm({ motor, onSubmit }) {
     const [motorData, setMotorData] = useState(motor || null);
     const [loading, setLoading] = useState(!motor);
-    const [totalHarga, setTotalHarga] = useState(0);
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
 
@@ -17,7 +17,7 @@ export default function SewaMotorForm({ motor, onSubmit }) {
             if (!motor || !motor.gambar || !motor.nama) {
                 setLoading(true);
                 try {
-                    const allMotors = await ambilDataMotor();  // Pastikan Anda memiliki fungsi ini untuk mengambil data motor
+                    const allMotors = await ambilDataMotor();  // Fungsi ambil data motor
                     const selectedMotor = allMotors.find((item) => item.id === motor?.id);
                     if (selectedMotor) {
                         setMotorData(selectedMotor);
@@ -40,9 +40,7 @@ export default function SewaMotorForm({ motor, onSubmit }) {
         setDatePickerVisibility(false);
     };
 
-    // Mendapatkan tanggal sekarang
     const currentDate = new Date();
-    const currentDateString = currentDate.toISOString().split('T')[0];  // Format YYYY-MM-DD
 
     if (loading) {
         return (
@@ -63,21 +61,38 @@ export default function SewaMotorForm({ motor, onSubmit }) {
 
     return (
         <KeyboardAvoidingView
-            behavior="padding"  
+            behavior="padding"
             style={styles.container}
         >
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                 <Formik
                     initialValues={{ 
-                        motorTerpilih: motorData, 
                         namaPenyewa: '', 
                         tanggalPemesanan: '', 
                         hariPenyewaan: '', 
-                        totalHarga: 0 
                     }}
                     onSubmit={(values) => {
                         if (onSubmit && typeof onSubmit === 'function') {
-                            onSubmit(values); // Mengirimkan semua data penyewa dan motor ke fungsi onSubmit
+                            const formattedDate = selectedDate ? selectedDate.toISOString().split('T')[0] : '';
+                            const totalHarga = (parseInt(values.hariPenyewaan, 10) || 0) * motorData.harga;
+
+                            onSubmit({
+                                namaPenyewa: values.namaPenyewa,
+                                tanggalPemesanan: formattedDate,
+                                hariPenyewaan: parseInt(values.hariPenyewaan, 10) || 0,
+                                totalHarga,
+                                items: [
+                                    {
+                                        id: motorData.id,
+                                        nama: motorData.nama,
+                                        gambar: motorData.gambar,
+                                        harga: motorData.harga,
+                                        status: motorData.status,
+                                        hariPenyewaan: parseInt(values.hariPenyewaan, 10) || 0,
+                                        totalHarga,
+                                    },
+                                ],
+                            });
                         } else {
                             console.warn('Fungsi onSubmit tidak disediakan atau bukan fungsi valid');
                         }
@@ -99,7 +114,6 @@ export default function SewaMotorForm({ motor, onSubmit }) {
                                 </Text>
                             </View>
 
-                            {/* Form Input untuk Nama Penyewa */}
                             <TextInput
                                 style={styles.input}
                                 placeholder="Nama Penyewa"
@@ -107,7 +121,6 @@ export default function SewaMotorForm({ motor, onSubmit }) {
                                 onChangeText={(text) => setFieldValue('namaPenyewa', text)}
                             />
 
-                            {/* Tombol untuk Memilih Tanggal Pemesanan */}
                             <TouchableOpacity 
                                 style={[styles.input, { justifyContent: 'center', paddingLeft: 15 }]} 
                                 onPress={() => setDatePickerVisibility(true)}
@@ -117,36 +130,26 @@ export default function SewaMotorForm({ motor, onSubmit }) {
                                 </Text>
                             </TouchableOpacity>
 
-                            {/* Form Input untuk Jumlah Hari Penyewaan */}
                             <TextInput
                                 style={styles.input}
                                 placeholder="Berapa hari dipesan"
                                 keyboardType="numeric"
                                 value={values.hariPenyewaan}
                                 onChangeText={(text) => {
-                                    const hari = parseInt(text, 10) || 0;
                                     setFieldValue('hariPenyewaan', text);
-                                    setFieldValue('totalHarga', hari * motorData.harga); // Menghitung total harga
                                 }}
                             />
 
-                            {/* Tampilkan Total Harga */}
-                            <Text style={styles.totalHarga}>
-                                Total Harga: Rp {values.totalHarga}
-                            </Text>
-
-                            {/* Tombol Konfirmasi Penyewaan */}
                             <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                                 <Text style={styles.buttonText}>Konfirmasi Penyewaan</Text>
                             </TouchableOpacity>
 
-                            {/* Modal untuk Memilih Tanggal */}
                             <DateTimePickerModal
                                 isVisible={isDatePickerVisible}
                                 mode="date"
                                 onConfirm={handleDateConfirm}
                                 onCancel={() => setDatePickerVisibility(false)}
-                                minimumDate={currentDate}  // Membatasi tanggal pemesanan agar tidak bisa memilih tanggal lampau
+                                minimumDate={currentDate}
                             />
                         </View>
                     )}

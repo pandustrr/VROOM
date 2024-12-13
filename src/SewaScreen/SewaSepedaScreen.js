@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Alert, StyleSheet } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { auth } from '../services/firebase'; // Pastikan untuk sesuaikan dengan layanan autentikasi Anda
-import { simpanDataPesananSepeda } from '../services/dbService';  // Sesuaikan dengan service untuk menyimpan pesanan sepeda
-import SewaSepedaForm from '../SewaForm/SewaSepedaForm';  // Pastikan jalur impor sudah sesuai
+import { auth } from '../services/firebase'; // Sesuaikan path impor sesuai folder
+import { simpanDataPesananSepeda } from '../services/dbService';  // Sesuaikan dengan fungsi simpanDataPesananSepeda
+import SewaSepedaForm from '../SewaForm/SewaSepedaForm'; // Sesuaikan dengan file form sepeda
 
 export default function SewaSepedaScreen() {
     const route = useRoute();
@@ -27,21 +27,30 @@ export default function SewaSepedaScreen() {
 
             if (sepedaTerpilih.status === 'tidak tersedia') {
                 Alert.alert('Sepeda ini tidak tersedia untuk disewa.');
-                return; 
+                return;
             }
 
-            await simpanDataPesananSepeda({
+            // Format ulang data untuk struktur Firestore baru
+            const pesanan = {
                 email: userEmail,
-                gambar: sepedaTerpilih.gambar,
-                harga: sepedaTerpilih.harga,
-                id: sepedaTerpilih.id,
-                nama: sepedaTerpilih.nama,
-                status: sepedaTerpilih.status,
+                tanggalPemesanan: new Date().toISOString().split('T')[0], // Format YYYY-MM-DD
+                items: [
+                    {
+                        id: sepedaTerpilih.id,
+                        nama: sepedaTerpilih.nama,
+                        gambar: sepedaTerpilih.gambar,
+                        harga: sepedaTerpilih.harga,
+                        status: sepedaTerpilih.status,
+                        hariPenyewaan: values.hariPenyewaan,
+                        totalHarga: values.totalHarga,
+                    },
+                ],
+                statusPembayaran: 'Belum dibayar',
                 namaPenyewa: values.namaPenyewa,
-                tanggalPemesanan: values.tanggalPemesanan,
-                hariPenyewaan: values.hariPenyewaan,
-                totalHarga: values.totalHarga,
-            });
+                totalHargaPesanan: values.totalHarga,
+            };
+
+            await simpanDataPesananSepeda(pesanan);
 
             // Notifikasi sukses
             Alert.alert('Sukses', 'Sepeda berhasil disewa!', [

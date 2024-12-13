@@ -30,18 +30,27 @@ export default function SewaMobilScreen() {
                 return; 
             }
 
-            await simpanDataPesananMobil({
+            // Format ulang data untuk struktur Firestore baru
+            const pesanan = {
                 email: userEmail,
-                gambar: mobilTerpilih.gambar,
-                harga: mobilTerpilih.harga,
-                id: mobilTerpilih.id,
-                nama: mobilTerpilih.nama,
-                status: mobilTerpilih.status,
+                tanggalPemesanan: new Date().toISOString().split('T')[0], // Format YYYY-MM-DD
+                items: [
+                    {
+                        id: mobilTerpilih.id,
+                        nama: mobilTerpilih.nama,
+                        gambar: mobilTerpilih.gambar,
+                        harga: mobilTerpilih.harga,
+                        status: mobilTerpilih.status,
+                        hariPenyewaan: values.hariPenyewaan,
+                        totalHarga: values.totalHarga,
+                    },
+                ],
+                statusPembayaran: 'Belum dibayar',
                 namaPenyewa: values.namaPenyewa,
-                tanggalPemesanan: values.tanggalPemesanan,
-                hariPenyewaan: values.hariPenyewaan,
-                totalHarga: values.totalHarga,
-            });
+                totalHargaPesanan: values.totalHarga,
+            };
+
+            await simpanDataPesananMobil(pesanan);
 
             // Notifikasi sukses
             Alert.alert('Sukses', 'Mobil berhasil disewa!', [

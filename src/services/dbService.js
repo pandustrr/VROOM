@@ -10,6 +10,9 @@ import {
     deleteDoc,
     getFirestore
 } from 'firebase/firestore'; 
+import { ref, remove } from 'firebase/database';  // Fungsi untuk menghapus data di Realtime Database
+import { database } from './firebase';  // Mengimpor database dari firebase.js
+
 
 
 // Fungsi untuk menyimpan data pengguna
@@ -111,173 +114,162 @@ export const ambilDataSepeda = async () => {
 
 export async function simpanDataPesananMobil(pesanan) {
     try {
-        if (!pesanan.email || !pesanan.id) {
-            throw new Error("Email pengguna dan ID mobil harus disertakan.");
+        if (!pesanan.email || !pesanan.items || !pesanan.namaPenyewa) {
+            throw new Error("Email, nama penyewa, dan daftar item harus disertakan.");
         }
 
-        if (pesanan.status === "tidak tersedia") {
-            Alert.alert("Error", "Mobil ini tidak tersedia untuk disewa.");
-            return;
-        }
+        // Validasi setiap item mobil
+        pesanan.items.forEach(item => {
+            if (item.status === "tidak tersedia") {
+                throw new Error(`Mobil ${item.nama} tidak tersedia untuk disewa.`);
+            }
+        });
 
-        const idPesananBaru = await getNextPesananId(pesanan.email);
+        // Buat ID pesanan baru
+        const idPesananBaru = `pesanan_${Date.now()}`;
 
-        const pesananRef = doc(db, "pesanan_saya", pesanan.email);
+        // Referensi dokumen pesanan baru
+        const pesananRef = doc(db, "pesanan", idPesananBaru);
 
+        // Hitung total harga pesanan
+        const totalHargaPesanan = pesanan.items.reduce((total, item) => total + item.totalHarga, 0);
+
+        // Simpan data pesanan ke Firestore
         await setDoc(pesananRef, {
             email: pesanan.email,
-        }, { merge: true });
-
-        const itemRef = collection(pesananRef, "items");
-        await addDoc(itemRef, {
-            idPesanan: idPesananBaru,
-            gambar: pesanan.gambar,
-            harga: pesanan.harga,
-            id: pesanan.id,
-            nama: pesanan.nama,
-            status: pesanan.status,
+            tanggalPemesanan: pesanan.tanggalPemesanan || new Date().toISOString().split('T')[0],
+            items: pesanan.items,
+            statusPembayaran: pesanan.statusPembayaran || "Belum dibayar",
             namaPenyewa: pesanan.namaPenyewa,
-            tanggalPemesanan: pesanan.tanggalPemesanan,
-            hariPenyewaan: pesanan.hariPenyewaan,
-            totalHarga: pesanan.totalHarga,
+            totalHargaPesanan
         });
 
         console.log("Pesanan mobil berhasil disimpan:", pesanan);
     } catch (error) {
         console.error("Error saat menyimpan data pesanan mobil:", error.message);
+        Alert.alert("Error", error.message);
         throw error;
     }
 }
 
 export async function simpanDataPesananMotor(pesanan) {
     try {
-        if (!pesanan.email || !pesanan.id) {
-            throw new Error("Email pengguna dan ID motor harus disertakan.");
+        if (!pesanan.email || !pesanan.items || !pesanan.namaPenyewa) {
+            throw new Error("Email, nama penyewa, dan daftar item harus disertakan.");
         }
 
-        if (pesanan.status === "tidak tersedia") {
-            Alert.alert("Error", "Motor ini tidak tersedia untuk disewa.");
-            return;
-        }
+        // Validasi setiap item motor
+        pesanan.items.forEach(item => {
+            if (item.status === "tidak tersedia") {
+                throw new Error(`Motor ${item.nama} tidak tersedia untuk disewa.`);
+            }
+        });
 
-        const idPesananBaru = await getNextPesananId(pesanan.email);
+        // Buat ID pesanan baru
+        const idPesananBaru = `pesanan_${Date.now()}`;
 
-        const pesananRef = doc(db, "pesanan_saya", pesanan.email);
+        // Referensi dokumen pesanan baru
+        const pesananRef = doc(db, "pesanan", idPesananBaru);
 
+        // Hitung total harga pesanan
+        const totalHargaPesanan = pesanan.items.reduce((total, item) => total + item.totalHarga, 0);
+
+        // Simpan data pesanan ke Firestore
         await setDoc(pesananRef, {
             email: pesanan.email,
-        }, { merge: true });
-
-        const itemRef = collection(pesananRef, "items");
-        await addDoc(itemRef, {
-            idPesanan: idPesananBaru,
-            gambar: pesanan.gambar,
-            harga: pesanan.harga,
-            id: pesanan.id,
-            nama: pesanan.nama,
-            status: pesanan.status,
+            tanggalPemesanan: pesanan.tanggalPemesanan || new Date().toISOString().split('T')[0],
+            items: pesanan.items,
+            statusPembayaran: pesanan.statusPembayaran || "Belum dibayar",
             namaPenyewa: pesanan.namaPenyewa,
-            tanggalPemesanan: pesanan.tanggalPemesanan,
-            hariPenyewaan: pesanan.hariPenyewaan,
-            totalHarga: pesanan.totalHarga,
+            totalHargaPesanan
         });
 
         console.log("Pesanan motor berhasil disimpan:", pesanan);
     } catch (error) {
         console.error("Error saat menyimpan data pesanan motor:", error.message);
-        throw error;  
+        Alert.alert("Error", error.message);
+        throw error;
     }
 }
 
 export async function simpanDataPesananSepeda(pesanan) {
     try {
-        if (!pesanan.email || !pesanan.id) {
-            throw new Error("Email pengguna dan ID sepeda harus disertakan.");
+        if (!pesanan.email || !pesanan.items || !pesanan.namaPenyewa) {
+            throw new Error("Email, nama penyewa, dan daftar item harus disertakan.");
         }
 
-        if (pesanan.status === "tidak tersedia") {
-            Alert.alert("Error", "Sepeda ini tidak tersedia untuk disewa.");
-            return;
-        }
+        // Validasi setiap item sepeda
+        pesanan.items.forEach(item => {
+            if (item.status === "tidak tersedia") {
+                throw new Error(`Sepeda ${item.nama} tidak tersedia untuk disewa.`);
+            }
+        });
 
-        const idPesananBaru = await getNextPesananId(pesanan.email);
+        // Buat ID pesanan baru
+        const idPesananBaru = `pesanan_${Date.now()}`;
 
-        const pesananRef = doc(db, "pesanan_saya", pesanan.email);
+        // Referensi dokumen pesanan baru
+        const pesananRef = doc(db, "pesanan", idPesananBaru);
 
-        // Menyimpan atau memperbarui data pesanan pengguna
+        // Hitung total harga pesanan
+        const totalHargaPesanan = pesanan.items.reduce((total, item) => total + item.totalHarga, 0);
+
+        // Simpan data pesanan ke Firestore
         await setDoc(pesananRef, {
             email: pesanan.email,
-        }, { merge: true });
-
-        const itemRef = collection(pesananRef, "items");
-        await addDoc(itemRef, {
-            idPesanan: idPesananBaru,
-            gambar: pesanan.gambar,
-            harga: pesanan.harga,
-            id: pesanan.id,
-            nama: pesanan.nama,
-            status: pesanan.status,
+            tanggalPemesanan: pesanan.tanggalPemesanan || new Date().toISOString().split('T')[0],
+            items: pesanan.items,
+            statusPembayaran: pesanan.statusPembayaran || "Belum dibayar",
             namaPenyewa: pesanan.namaPenyewa,
-            tanggalPemesanan: pesanan.tanggalPemesanan,
-            hariPenyewaan: pesanan.hariPenyewaan,
-            totalHarga: pesanan.totalHarga,
+            totalHargaPesanan
         });
 
         console.log("Pesanan sepeda berhasil disimpan:", pesanan);
     } catch (error) {
         console.error("Error saat menyimpan data pesanan sepeda:", error.message);
-        throw error;  
-    }
-}
-
-async function getNextPesananId(email) {
-    try {
-        const itemsCollection = collection(doc(db, "pesanan_saya", email), "items");
-        const snapshot = await getDocs(itemsCollection);
-
-        return snapshot.size + 1;
-    } catch (error) {
-        console.error("Error saat mendapatkan ID pesanan baru:", error.message);
+        Alert.alert("Error", error.message);
         throw error;
     }
 }
 
 
-export async function bacaPesanan(email) {
+export async function bacaPesanan(email, pesananId) {
     try {
-        const itemsRef = collection(db, "pesanan_saya", email, "items");
+        // Mengakses koleksi pesanan berdasarkan email dan id pesanan
+        const pesananRef = doc(db, 'pesanan', pesananId);
+        const pesananSnapshot = await getDoc(pesananRef);
 
-        const querySnapshot = await getDocs(itemsRef);
+        if (!pesananSnapshot.exists()) {
+            throw new Error("Pesanan tidak ditemukan.");
+        }
 
-        const pesananList = querySnapshot.docs.map(doc => ({
-            id: doc.id, 
-            ...doc.data(), 
-        }));
+        const pesananData = pesananSnapshot.data();
 
-        console.log("Daftar pesanan:", pesananList); 
-        return pesananList;
+        // Menyusun data pesanan dengan format yang sesuai
+        const pesananDetail = {
+            id: pesananSnapshot.id,
+            email: pesananData.email,
+            tanggalPemesanan: pesananData.tanggalPemesanan,
+            items: pesananData.items,
+            statusPembayaran: pesananData.statusPembayaran,
+            namaPenyewa: pesananData.namaPenyewa,
+            totalHargaPesanan: pesananData.totalHargaPesanan,
+        };
+
+        return pesananDetail;
     } catch (error) {
         console.error("Error saat membaca data pesanan:", error.message);
         throw error;
     }
 }
 
-export async function hapusPesanan(id, email) {
-    try {
-        console.log("Memulai penghapusan dengan ID:", id, "dan Email:", email);
-
-        if (!id || !email) {
-            throw new Error("ID atau Email tidak valid.");
+export const hapusPesanan = async (pesananId) => {
+        try {
+        const pesananRef = doc(db, 'pesanan', pesananId); // Menyusun referensi ke dokumen pesanan
+        await deleteDoc(pesananRef);  // Menghapus dokumen pesanan
+        console.log("Pesanan berhasil dihapus");
+        } catch (error) {
+        console.error("Error saat menghapus pesanan: ", error);
+        throw error;  // Melempar error agar bisa ditangani di tempat lain
         }
-
-        const itemRef = doc(db, "pesanan_saya", email, "items", id);
-        console.log("Referensi dokumen:", itemRef.path);
-
-        await deleteDoc(itemRef);
-
-        console.log("Dokumen berhasil dihapus.");
-    } catch (error) {
-        console.error("Gagal menghapus dokumen:", error.message);
-        throw error;
-    }
-}
+    };
