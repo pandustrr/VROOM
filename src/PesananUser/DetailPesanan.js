@@ -1,7 +1,6 @@
-// DetailPesanan.js
 import React from 'react';
 import { View, Text, Alert, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { hapusPesanan } from '../services/dbService';  // Pastikan mengimpor hapusPesanan
+import { hapusPesanan, updateStatusPesanan } from '../services/dbService';  // Pastikan updateStatusPesanan diimport
 
 const DetailPesanan = ({ route, navigation }) => {
     const { data } = route.params;
@@ -34,6 +33,28 @@ const DetailPesanan = ({ route, navigation }) => {
         );
     };
 
+    const handleKonfirmasiPembayaran = async () => {
+        if (!data || !data.id) {
+            Alert.alert("Error", "Data pesanan tidak valid.");
+            return;
+        }
+
+        if (data.statusPembayaran === 'Bayar') {
+            Alert.alert("Informasi", "Pesanan ini sudah dibayar.");
+            return;
+        }
+
+        try {
+            // Update status pesanan menjadi 'Bayar'
+            await updateStatusPesanan(data.id, 'Bayar');
+            Alert.alert("Sukses", "Pembayaran telah dikonfirmasi.");
+            navigation.goBack();  // Navigasi kembali setelah pembayaran berhasil
+        } catch (error) {
+            console.error("Error saat mengupdate status pembayaran: ", error);
+            Alert.alert("Error", "Terjadi kesalahan saat mengonfirmasi pembayaran.");
+        }
+    };
+
     const renderDetail = () => (
         <View>
             <Text style={styles.label}>Nama Penyewa:</Text>
@@ -56,8 +77,6 @@ const DetailPesanan = ({ route, navigation }) => {
                         <Text style={styles.itemLabel}>Hari Penyewaan:</Text>
                         <Text style={styles.itemValue}>{item?.hariPenyewaan || '-'}</Text>
 
-                        <Text style={styles.itemLabel}>Total Harga:</Text>
-                        <Text style={styles.itemValue}>Rp {item?.totalHarga || '-'}</Text>
                     </View>
                 ))
             ) : (
@@ -66,6 +85,13 @@ const DetailPesanan = ({ route, navigation }) => {
 
             <Text style={styles.label}>Total Harga Pesanan:</Text>
             <Text style={styles.value}>Rp {data?.totalHargaPesanan || '-'}</Text>
+
+            {/* Tombol Konfirmasi Pembayaran */}
+            {data?.statusPembayaran === 'Belum dibayar' && (
+                <TouchableOpacity style={styles.button} onPress={handleKonfirmasiPembayaran}>
+                    <Text style={styles.buttonText}>Konfirmasi Pembayaran</Text>
+                </TouchableOpacity>
+            )}
         </View>
     );
 
@@ -73,7 +99,9 @@ const DetailPesanan = ({ route, navigation }) => {
         <View style={styles.container}>
             <Text style={styles.title}>Detail Pesanan</Text>
             {renderDetail()}
-            <TouchableOpacity style={styles.button} onPress={handleDeletePesanan}>
+
+            {/* Tombol Hapus Pesanan berwarna merah */}
+            <TouchableOpacity style={styles.hapusButton} onPress={handleDeletePesanan}>
                 <Text style={styles.buttonText}>Hapus Pesanan</Text>
             </TouchableOpacity>
         </View>
@@ -129,7 +157,14 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
     button: {
-        backgroundColor: '#ff5c5c',
+        backgroundColor: '#28a745',  
+        paddingVertical: 15,
+        borderRadius: 8,
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    hapusButton: {
+        backgroundColor: '#FF5C5C', 
         paddingVertical: 15,
         borderRadius: 8,
         alignItems: 'center',

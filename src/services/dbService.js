@@ -6,12 +6,13 @@ import {
     setDoc, 
     getDoc, 
     getDocs, 
+    updateDoc,
     addDoc, 
     deleteDoc,
     getFirestore
 } from 'firebase/firestore'; 
-import { ref, remove } from 'firebase/database';  // Fungsi untuk menghapus data di Realtime Database
-import { database } from './firebase';  // Mengimpor database dari firebase.js
+import { firestore } from './firebase';  // Pastikan ini mengimpor firestore dari file konfigurasi Firebase Anda
+import { getAuth } from 'firebase/auth';
 
 
 
@@ -272,4 +273,26 @@ export const hapusPesanan = async (pesananId) => {
         console.error("Error saat menghapus pesanan: ", error);
         throw error;  // Melempar error agar bisa ditangani di tempat lain
         }
-    };
+};
+
+export const updateStatusPesanan = async (pesananId, status) => {
+    try {
+        // Pastikan pesananId valid
+        if (!pesananId) {
+            throw new Error('Pesanan ID tidak valid');
+        }
+
+        // Referensi ke dokumen pesanan
+        const pesananRef = doc(db, 'pesanan', pesananId);
+
+        // Update status pembayaran
+        await updateDoc(pesananRef, {
+            statusPembayaran: 'Sudah Dibayar',
+        });
+
+        console.log(`Status pembayaran pesanan dengan ID ${pesananId} berhasil diubah menjadi ${status}`);
+    } catch (error) {
+        console.error('Error mengupdate status pesanan:', error);
+        throw new Error('Terjadi kesalahan saat mengupdate status pesanan');
+    }
+};
