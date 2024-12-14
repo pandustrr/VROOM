@@ -6,7 +6,6 @@ import ResetPasswordForm from '../components/ResetPasswordForm';
 export default function LoginScreen({ navigation }) {
     const [screen, setScreen] = useState('login'); 
 
-    // Fungsi untuk menangani login sukses
     const handleLoginSuccess = (user) => {
         const name = user.username || 'Pengguna'; 
         navigation.navigate('Rental Kendaraan', { userName: name });
@@ -16,22 +15,22 @@ export default function LoginScreen({ navigation }) {
         case 'register':
             return (
                 <RegisterForm
-                    onLogin={() => setScreen('login')} // Kembali ke layar login
+                    onLogin={() => setScreen('login')} 
                 />
             );
         case 'reset':
             return (
                 <ResetPasswordForm
-                    onBackToLogin={() => setScreen('login')} // Kembali ke layar login
+                    onBackToLogin={() => setScreen('login')}
                 />
             );
         default:
             return (
                 <LoginForm
-                    navigation={navigation} // Menyertakan navigation ke LoginForm
-                    onRegister={() => setScreen('register')} // Pindah ke layar registrasi
-                    onResetPassword={() => setScreen('reset')} // Pindah ke layar reset password
-                    onLoginSuccess={handleLoginSuccess} // Mengirimkan handleLoginSuccess ke LoginForm
+                    navigation={navigation} 
+                    onRegister={() => setScreen('register')} 
+                    onResetPassword={() => setScreen('reset')} 
+                    onLoginSuccess={handleLoginSuccess} 
                 />
             );
     }

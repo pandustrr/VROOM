@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-// Import layar-layar yang digunakan
 import LoginScreen from './src/screens/LoginScreen';
 import TampilanAwalScreen from './src/components/TampilanAwalScreen';
 import MobilScreen from './src/KendaraanScreen/MobilScreen';
@@ -18,11 +17,10 @@ import DetailPesanan from './src/PesananUser/DetailPesanan';
 const Stack = createStackNavigator();
 
 export default function App() {
-    const [emailUser, setEmailUser] = useState(null); // State untuk menyimpan email pengguna setelah login
+    const [emailUser, setEmailUser] = useState(null); 
 
-    // Fungsi untuk menangani login dan menyimpan email pengguna
     const handleLogin = (email) => {
-        setEmailUser(email); // Simpan email setelah login
+        setEmailUser(email); 
     };
 
     return (
@@ -33,13 +31,12 @@ export default function App() {
                     name="Login"
                     component={LoginScreen}
                     options={{ headerShown: false }}
-                    // Menambahkan listener untuk menangani login dan menyimpan email
-                    listeners={{
-                        focus: () => {
-                            // Pastikan LoginScreen mengirimkan email setelah login
-                            // Anda bisa memanggil handleLogin di LoginScreen jika perlu
-                        }
-                    }}
+                    // listeners={{
+                    //     focus: () => {
+                    //         // Pastikan LoginScreen mengirimkan email setelah login
+                    //         // Anda bisa memanggil handleLogin di LoginScreen jika perlu
+                    //     }
+                    // }}
                 />
                 
                 {/* Tampilan Awal */}
@@ -94,9 +91,9 @@ export default function App() {
                 {/* Halaman Pesanan Form */}
                 <Stack.Screen
                     name="PesananForm"
-                    component={PesananForm}  // Mengarah ke PesananForm
+                    component={PesananForm}  
                     options={{ title: 'Pesanan Saya' }}
-                    initialParams={{ emailPengguna: emailUser }} // Mengirim email pengguna ke halaman PesananForm
+                    initialParams={{ emailPengguna: emailUser }} 
                 />
                 
                 {/* Halaman Pesanan Screen */}

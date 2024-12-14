@@ -1,12 +1,11 @@
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
-// Styles khusus untuk ResetPasswordForm
 container: {
     flex: 1,
     justifyContent: 'center',
     padding: 20,
-    backgroundColor: '#f9f9f9', // Warna latar belakang yang seragam
+    backgroundColor: '#f9f9f9',
 },
 
 input: {
@@ -15,7 +14,7 @@ input: {
     borderRadius: 5,
     padding: 10,
     marginBottom: 15,
-    backgroundColor: '#fff', // Warna latar input
+    backgroundColor: '#fff', 
 },
 judul: {
     fontSize: 24,
@@ -29,10 +28,10 @@ resetTitle: {
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 20,
-    textAlign: 'center', // Judul untuk halaman reset password
+    textAlign: 'center',
 },
 resetButton: {
-    backgroundColor: '#FFA726', // Warna tombol reset password
+    backgroundColor: '#FFA726', 
     borderRadius: 5,
     paddingVertical: 10,
 },

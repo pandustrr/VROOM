@@ -1,12 +1,11 @@
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
-// Styles khusus untuk RegisterForm
 container: {
     flex: 1,
     justifyContent: 'center',
     padding: 20,
-    backgroundColor: '#f9f9f9', // Warna latar belakang yang seragam
+    backgroundColor: '#f9f9f9',
 },
 
 judul: {
@@ -22,7 +21,7 @@ registerButton: {
     paddingVertical: 10,
 },
 backButton: {
-    backgroundColor: '#f44336', // Warna tombol kembali
+    backgroundColor: '#f44336', 
     borderRadius: 5,
     paddingVertical: 10,
     marginTop: 10,

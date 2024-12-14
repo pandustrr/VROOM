@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, ActivityIndicator, TextInput, ScrollView, KeyboardAvoidingView } from 'react-native';
 import { Formik } from 'formik';
-import { ambilDataSepeda } from '../services/dbService';  // Sesuaikan dengan fungsi ambilDataSepeda
+import { ambilDataSepeda } from '../services/dbService'; 
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import styles from '../StylesKendaraan/SewaSepedaFormStyles';
 
@@ -16,7 +16,7 @@ export default function SewaSepedaForm({ sepeda, onSubmit }) {
             if (!sepeda || !sepeda.gambar || !sepeda.nama) {
                 setLoading(true);
                 try {
-                    const allSepedas = await ambilDataSepeda();  // Fungsi ambil data sepeda
+                    const allSepedas = await ambilDataSepeda();
                     const selectedSepeda = allSepedas.find((item) => item.id === sepeda?.id);
                     if (selectedSepeda) {
                         setSepedaData(selectedSepeda);

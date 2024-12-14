@@ -1,8 +1,8 @@
     import React from 'react';
     import { View, Alert, StyleSheet } from 'react-native';
     import { useRoute, useNavigation } from '@react-navigation/native';
-    import { auth } from '../services/firebase'; // Sesuaikan path impor sesuai folder
-    import { simpanDataPesananMotor } from '../services/dbService';  // Sesuaikan dengan fungsi simpanDataPesananMotor
+    import { auth } from '../services/firebase';
+    import { simpanDataPesananMotor } from '../services/dbService'; 
     import SewaMotorForm from '../SewaForm/SewaMotorForm';
 
     export default function SewaMotorScreen() {
@@ -30,10 +30,9 @@
                     return; 
                 }
 
-                // Format ulang data untuk struktur Firestore baru
                 const pesanan = {
                     email: userEmail,
-                    tanggalPemesanan: new Date().toISOString().split('T')[0], // Format YYYY-MM-DD
+                    tanggalPemesanan: new Date().toISOString().split('T')[0], 
                     items: [
                         {
                             id: motorTerpilih.id,
@@ -52,11 +51,10 @@
 
                 await simpanDataPesananMotor(pesanan);
 
-                // Notifikasi sukses
                 Alert.alert('Sukses', 'Motor berhasil disewa!', [
                     {
                         text: 'OK',
-                        onPress: () => navigation.goBack(), // Navigasi kembali ke halaman sebelumnya
+                        onPress: () => navigation.goBack(), 
                     },
                 ]);
             } catch (error) {

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { View, FlatList, TouchableOpacity, Text } from 'react-native';
-import { ambilDataSepeda } from '../services/dbService'; // Pastikan untuk mengimpor fungsi yang benar
-import SepedaForm from '../KendaraanForm/SepedaForm'; // Menggunakan form sepeda
+import { ambilDataSepeda } from '../services/dbService'; 
+import SepedaForm from '../KendaraanForm/SepedaForm';
 import { useNavigation } from '@react-navigation/native';
-import styles from '../StylesKendaraan/SepedaScreenStyles'; // Pastikan style untuk sepeda
+import styles from '../StylesKendaraan/SepedaScreenStyles'; 
 
 export default function SepedaScreen() {
     const [sepedaData, setSepedaData] = useState([]);

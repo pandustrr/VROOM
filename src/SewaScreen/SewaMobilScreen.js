@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Alert, StyleSheet } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { auth } from '../services/firebase'; // Sesuaikan path impor sesuai folder
+import { auth } from '../services/firebase'; 
 import { simpanDataPesananMobil } from '../services/dbService';
 import SewaMobilForm from '../SewaForm/SewaMobilForm';
 
@@ -30,10 +30,9 @@ export default function SewaMobilScreen() {
                 return; 
             }
 
-            // Format ulang data untuk struktur Firestore baru
             const pesanan = {
                 email: userEmail,
-                tanggalPemesanan: new Date().toISOString().split('T')[0], // Format YYYY-MM-DD
+                tanggalPemesanan: new Date().toISOString().split('T')[0], 
                 items: [
                     {
                         id: mobilTerpilih.id,
@@ -52,11 +51,10 @@ export default function SewaMobilScreen() {
 
             await simpanDataPesananMobil(pesanan);
 
-            // Notifikasi sukses
             Alert.alert('Sukses', 'Mobil berhasil disewa!', [
                 {
                     text: 'OK',
-                    onPress: () => navigation.goBack(), // Navigasi kembali ke halaman sebelumnya
+                    onPress: () => navigation.goBack(), 
                 },
             ]);
         } catch (error) {

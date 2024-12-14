@@ -1,4 +1,3 @@
-// SewaMobilForm.js
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, ActivityIndicator, TextInput, ScrollView, KeyboardAvoidingView } from 'react-native';
 import { Formik } from 'formik';

@@ -7,26 +7,23 @@ import {
 } from 'firebase/auth';
 import { Alert } from 'react-native';
 
-// Fungsi validasi email (Pure Function)
 const validasiEmail = (email) => {
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    return regex.test(email); // Mengembalikan true jika format email valid
+    return regex.test(email); 
 };
 
-// Higher-order function untuk memverifikasi email
 const verifikasiEmail = async (user) => {
     if (!user.emailVerified) {
         Alert.alert(
             "Email Belum Terverifikasi",
             "Kami telah mengirimkan email verifikasi. Silakan periksa inbox Anda."
         );
-        await sendEmailVerification(user); // Kirim ulang email verifikasi
+        await sendEmailVerification(user);
         return false;
     }
     return true;
 };
 
-// Fungsi untuk registrasi pengguna
 export const registerUser = async (email, password, username) => {
     try {
         if (!validasiEmail(email)) {
@@ -50,7 +47,6 @@ export const registerUser = async (email, password, username) => {
     }
 };
 
-// Fungsi untuk login pengguna
 export const loginUser = async (email, password) => {
     try {
         if (!validasiEmail(email)) {

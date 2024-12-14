@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Alert, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { hapusPesanan, updateStatusPesanan } from '../services/dbService';  // Pastikan updateStatusPesanan diimport
+import { hapusPesanan, updateStatusPesanan } from '../services/dbService'; 
 
 const DetailPesanan = ({ route, navigation }) => {
     const { data } = route.params;
@@ -20,7 +20,7 @@ const DetailPesanan = ({ route, navigation }) => {
                     text: "Hapus",
                     onPress: async () => {
                         try {
-                            await hapusPesanan(data.id);  // Menghapus pesanan dengan id
+                            await hapusPesanan(data.id); 
                             Alert.alert("Berhasil", "Pesanan berhasil dihapus.");
                             navigation.goBack();
                         } catch (error) {
@@ -45,10 +45,9 @@ const DetailPesanan = ({ route, navigation }) => {
         }
 
         try {
-            // Update status pesanan menjadi 'Bayar'
             await updateStatusPesanan(data.id, 'Bayar');
             Alert.alert("Sukses", "Pembayaran telah dikonfirmasi.");
-            navigation.goBack();  // Navigasi kembali setelah pembayaran berhasil
+            navigation.goBack();  
         } catch (error) {
             console.error("Error saat mengupdate status pembayaran: ", error);
             Alert.alert("Error", "Terjadi kesalahan saat mengonfirmasi pembayaran.");

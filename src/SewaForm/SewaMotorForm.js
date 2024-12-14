@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, ActivityIndicator, TextInput, ScrollView, KeyboardAvoidingView } from 'react-native';
 import { Formik } from 'formik';
-import { ambilDataMotor } from '../services/dbService';  // Sesuaikan dengan fungsi ambilDataMotor
+import { ambilDataMotor } from '../services/dbService';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import styles from '../StylesKendaraan/SewaMotorFormStyles';
 
@@ -17,7 +17,7 @@ export default function SewaMotorForm({ motor, onSubmit }) {
             if (!motor || !motor.gambar || !motor.nama) {
                 setLoading(true);
                 try {
-                    const allMotors = await ambilDataMotor();  // Fungsi ambil data motor
+                    const allMotors = await ambilDataMotor(); 
                     const selectedMotor = allMotors.find((item) => item.id === motor?.id);
                     if (selectedMotor) {
                         setMotorData(selectedMotor);

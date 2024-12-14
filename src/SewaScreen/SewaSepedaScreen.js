@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Alert, StyleSheet } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { auth } from '../services/firebase'; // Sesuaikan path impor sesuai folder
-import { simpanDataPesananSepeda } from '../services/dbService';  // Sesuaikan dengan fungsi simpanDataPesananSepeda
-import SewaSepedaForm from '../SewaForm/SewaSepedaForm'; // Sesuaikan dengan file form sepeda
+import { auth } from '../services/firebase';
+import { simpanDataPesananSepeda } from '../services/dbService'; 
+import SewaSepedaForm from '../SewaForm/SewaSepedaForm';
 
 export default function SewaSepedaScreen() {
     const route = useRoute();
@@ -30,10 +30,9 @@ export default function SewaSepedaScreen() {
                 return;
             }
 
-            // Format ulang data untuk struktur Firestore baru
             const pesanan = {
                 email: userEmail,
-                tanggalPemesanan: new Date().toISOString().split('T')[0], // Format YYYY-MM-DD
+                tanggalPemesanan: new Date().toISOString().split('T')[0], 
                 items: [
                     {
                         id: sepedaTerpilih.id,
@@ -52,11 +51,10 @@ export default function SewaSepedaScreen() {
 
             await simpanDataPesananSepeda(pesanan);
 
-            // Notifikasi sukses
             Alert.alert('Sukses', 'Sepeda berhasil disewa!', [
                 {
                     text: 'OK',
-                    onPress: () => navigation.goBack(), // Navigasi kembali ke halaman sebelumnya
+                    onPress: () => navigation.goBack(), 
                 },
             ]);
         } catch (error) {

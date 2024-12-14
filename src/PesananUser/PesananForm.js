@@ -29,7 +29,7 @@ export default function PesananForm() {
         const q = query(
             pesananRef,
             where('email', '==', currentUser.email),
-            orderBy('tanggalPemesanan', 'desc') // Urutkan berdasarkan tanggal terbaru
+            orderBy('tanggalPemesanan', 'desc') 
         );
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -38,7 +38,7 @@ export default function PesananForm() {
             setLoading(false);
         });
 
-        return () => unsubscribe(); // Membersihkan listener saat komponen unmount
+        return () => unsubscribe(); 
     }, []);
 
     if (loading) {

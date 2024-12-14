@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
-import styles from '../StylesKendaraan/SepedaFormStyles'; // Sesuaikan dengan path untuk sepeda
+import styles from '../StylesKendaraan/SepedaFormStyles';
 
 export default function SepedaForm({ sepeda, onSelectSepeda, sepedaDipilih }) {
     return (

@@ -2,7 +2,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
-import { getDatabase } from 'firebase/database';  // Jika menggunakan Realtime Database
+import { getDatabase } from 'firebase/database'; 
 
 const firebaseConfig = {
     apiKey: "AIzaSyCwL2oeEzGnWN8zPT9G5bEGmraBs_qU1AU",
@@ -12,18 +12,14 @@ const firebaseConfig = {
     messagingSenderId: "725063017971",
     appId: "1:725063017971:web:b1d56b76d72048768f5e86",
     measurementId: "G-5P7Z2ML09H",
-    databaseURL: "https://vroom-d178a-default-rtdb.firebaseio.com/"  // Untuk Realtime Database
+    databaseURL: "https://vroom-d178a-default-rtdb.firebaseio.com/"  
 };
 
-// Inisialisasi aplikasi Firebase
 const app = initializeApp(firebaseConfig);
 
-// Inisialisasi Auth dan Firestore
 const auth = getAuth(app);
-const db = getFirestore(app);  // Firestore digunakan untuk data
+const db = getFirestore(app); 
 
-// Jika menggunakan Realtime Database, bisa tetap menggunakan ini
-const database = getDatabase(app);  // Hanya digunakan jika Anda menggunakan Realtime Database
+const database = getDatabase(app);  
 
-// Mengekspor auth dan db untuk digunakan di file lain
 export { auth, db, database };

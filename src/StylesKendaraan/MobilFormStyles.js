@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     mobilDipilih: {
-        borderColor: '#007bff', // Highlight dengan border biru ketika dipilih
+        borderColor: '#007bff', 
         borderWidth: 3,
     },
     gambarMobil: {

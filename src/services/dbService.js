@@ -11,12 +11,11 @@ import {
     deleteDoc,
     getFirestore
 } from 'firebase/firestore'; 
-import { firestore } from './firebase';  // Pastikan ini mengimpor firestore dari file konfigurasi Firebase Anda
+import { firestore } from './firebase'; 
 import { getAuth } from 'firebase/auth';
 
 
 
-// Fungsi untuk menyimpan data pengguna
 export const simpanDataPengguna = async (email, dataPengguna) => {
     try {
         await setDoc(doc(db, 'akun', email), dataPengguna);
@@ -26,7 +25,6 @@ export const simpanDataPengguna = async (email, dataPengguna) => {
     }
 };
 
-// Fungsi untuk mengambil data pengguna
 export const ambilDataPengguna = async (email) => {
     try {
         const docRef = doc(db, 'akun', email);
@@ -45,7 +43,6 @@ export const ambilDataPengguna = async (email) => {
     }
 };
 
-// Mengambil data motor
 export const ambilDataMotor = async () => {
     try {
         const motorCollectionRef = collection(db, 'motor'); 
@@ -68,7 +65,6 @@ export const ambilDataMotor = async () => {
     }
 };
 
-// Mengambil data mobil
 export const ambilDataMobil = async () => {
     try {
         const mobilCollection = collection(db, 'mobil');
@@ -119,23 +115,18 @@ export async function simpanDataPesananMobil(pesanan) {
             throw new Error("Email, nama penyewa, dan daftar item harus disertakan.");
         }
 
-        // Validasi setiap item mobil
         pesanan.items.forEach(item => {
             if (item.status === "tidak tersedia") {
                 throw new Error(`Mobil ${item.nama} tidak tersedia untuk disewa.`);
             }
         });
 
-        // Buat ID pesanan baru
         const idPesananBaru = `pesanan_${Date.now()}`;
 
-        // Referensi dokumen pesanan baru
         const pesananRef = doc(db, "pesanan", idPesananBaru);
 
-        // Hitung total harga pesanan
         const totalHargaPesanan = pesanan.items.reduce((total, item) => total + item.totalHarga, 0);
 
-        // Simpan data pesanan ke Firestore
         await setDoc(pesananRef, {
             email: pesanan.email,
             tanggalPemesanan: pesanan.tanggalPemesanan || new Date().toISOString().split('T')[0],
@@ -159,23 +150,18 @@ export async function simpanDataPesananMotor(pesanan) {
             throw new Error("Email, nama penyewa, dan daftar item harus disertakan.");
         }
 
-        // Validasi setiap item motor
         pesanan.items.forEach(item => {
             if (item.status === "tidak tersedia") {
                 throw new Error(`Motor ${item.nama} tidak tersedia untuk disewa.`);
             }
         });
 
-        // Buat ID pesanan baru
         const idPesananBaru = `pesanan_${Date.now()}`;
 
-        // Referensi dokumen pesanan baru
         const pesananRef = doc(db, "pesanan", idPesananBaru);
 
-        // Hitung total harga pesanan
         const totalHargaPesanan = pesanan.items.reduce((total, item) => total + item.totalHarga, 0);
 
-        // Simpan data pesanan ke Firestore
         await setDoc(pesananRef, {
             email: pesanan.email,
             tanggalPemesanan: pesanan.tanggalPemesanan || new Date().toISOString().split('T')[0],
@@ -199,23 +185,18 @@ export async function simpanDataPesananSepeda(pesanan) {
             throw new Error("Email, nama penyewa, dan daftar item harus disertakan.");
         }
 
-        // Validasi setiap item sepeda
         pesanan.items.forEach(item => {
             if (item.status === "tidak tersedia") {
                 throw new Error(`Sepeda ${item.nama} tidak tersedia untuk disewa.`);
             }
         });
 
-        // Buat ID pesanan baru
         const idPesananBaru = `pesanan_${Date.now()}`;
 
-        // Referensi dokumen pesanan baru
         const pesananRef = doc(db, "pesanan", idPesananBaru);
 
-        // Hitung total harga pesanan
         const totalHargaPesanan = pesanan.items.reduce((total, item) => total + item.totalHarga, 0);
 
-        // Simpan data pesanan ke Firestore
         await setDoc(pesananRef, {
             email: pesanan.email,
             tanggalPemesanan: pesanan.tanggalPemesanan || new Date().toISOString().split('T')[0],
