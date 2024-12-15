@@ -79,9 +79,6 @@ export default function PesananForm() {
                             </View>
                         </View>
                     ))}
-                    <Text style={styles.pembayaran}>
-                        Status Pembayaran: {item.statusPembayaran}
-                    </Text>
                 </TouchableOpacity>
             )}
         />

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Alert, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { hapusPesanan, updateStatusPesanan } from '../services/dbService'; 
+import { hapusPesanan } from '../services/dbService'; 
 
 const DetailPesanan = ({ route, navigation }) => {
     const { data } = route.params;
@@ -31,27 +31,6 @@ const DetailPesanan = ({ route, navigation }) => {
                 },
             ]
         );
-    };
-
-    const handleKonfirmasiPembayaran = async () => {
-        if (!data || !data.id) {
-            Alert.alert("Error", "Data pesanan tidak valid.");
-            return;
-        }
-
-        if (data.statusPembayaran === 'Bayar') {
-            Alert.alert("Informasi", "Pesanan ini sudah dibayar.");
-            return;
-        }
-
-        try {
-            await updateStatusPesanan(data.id, 'Bayar');
-            Alert.alert("Sukses", "Pembayaran telah dikonfirmasi.");
-            navigation.goBack();  
-        } catch (error) {
-            console.error("Error saat mengupdate status pembayaran: ", error);
-            Alert.alert("Error", "Terjadi kesalahan saat mengonfirmasi pembayaran.");
-        }
     };
 
     const renderDetail = () => (
@@ -85,11 +64,12 @@ const DetailPesanan = ({ route, navigation }) => {
             <Text style={styles.label}>Total Harga Pesanan:</Text>
             <Text style={styles.value}>Rp {data?.totalHargaPesanan || '-'}</Text>
 
-            {/* Tombol Konfirmasi Pembayaran */}
+            {/* Teks instruksi pembayaran */}
             {data?.statusPembayaran === 'Belum dibayar' && (
-                <TouchableOpacity style={styles.button} onPress={handleKonfirmasiPembayaran}>
-                    <Text style={styles.buttonText}>Konfirmasi Pembayaran</Text>
-                </TouchableOpacity>
+                <View style={styles.paymentInstruction}>
+                    <Text style={styles.instructionText}>Silahkan melakukan pembayaran dan mengambil kendaraan di:</Text>
+                    <Text style={styles.instructionText}>Alamat: Jl. Semeru XII</Text>
+                </View>
             )}
         </View>
     );
@@ -101,7 +81,7 @@ const DetailPesanan = ({ route, navigation }) => {
 
             {/* Tombol Hapus Pesanan berwarna merah */}
             <TouchableOpacity style={styles.hapusButton} onPress={handleDeletePesanan}>
-                <Text style={styles.buttonText}>Hapus Pesanan</Text>
+                <Text style={styles.buttonText}>Batalkan Pesanan</Text>
             </TouchableOpacity>
         </View>
     );
@@ -155,12 +135,16 @@ const styles = StyleSheet.create({
         color: '#555',
         marginBottom: 5,
     },
-    button: {
-        backgroundColor: '#28a745',  
-        paddingVertical: 15,
-        borderRadius: 8,
-        alignItems: 'center',
+    paymentInstruction: {
         marginTop: 20,
+        padding: 10,
+        backgroundColor: '#f8f9fa',
+        borderRadius: 8,
+    },
+    instructionText: {
+        fontSize: 16,
+        color: '#333',
+        textAlign: 'center',
     },
     hapusButton: {
         backgroundColor: '#FF5C5C', 
